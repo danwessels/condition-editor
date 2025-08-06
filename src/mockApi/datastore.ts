@@ -1,3 +1,5 @@
+import { type Product } from "../types";
+
 interface Property {
   id: number;
   name: string;
@@ -8,16 +10,6 @@ interface Property {
 interface Operator {
   text: string;
   id: string;
-}
-
-interface PropertyProduct {
-  property_id: number;
-  value: string | number;
-}
-
-interface Product {
-  id: number;
-  property_values: PropertyProduct[];
 }
 
 declare global {

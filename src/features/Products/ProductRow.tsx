@@ -1,10 +1,4 @@
-type Product = {
-  id: number;
-  property_values: Array<{
-    property_id: number;
-    value: string | number;
-  }>;
-};
+import { type Product } from "../../types";
 
 const rowClass = "border-t-1 border-slate-200 p-2";
 
