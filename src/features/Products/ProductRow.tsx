@@ -6,6 +6,8 @@ type Product = {
   }>;
 };
 
+const rowClass = "border-t-1 border-slate-200 p-2";
+
 export default function ProductRow({ product }: { product: Product }) {
   const properties = window.datastore.getProperties();
 
@@ -22,7 +24,10 @@ export default function ProductRow({ product }: { product: Product }) {
       {properties.map(({ id }: { id: number }) => {
         const propertyValue = getPropertyValue(product, id);
         return (
-          <div key={`product-${product.id}-property-${id}`}>
+          <div
+            key={`product-${product.id}-property-${id}`}
+            className={rowClass}
+          >
             {propertyValue}
           </div>
         );

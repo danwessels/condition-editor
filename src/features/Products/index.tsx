@@ -1,12 +1,14 @@
 import ProductRow from "./ProductRow";
 
+const headerRowClass = "font-semibold p-2";
+
 export default function Products() {
   const products = window.datastore.getProducts();
   const properties = window.datastore.getProperties();
 
   return (
     <div
-      className="grid gap-2 items-center"
+      className="grid border-1 border-slate-300 rounded-sm"
       style={{
         gridTemplateColumns: `repeat(${properties.length}, minmax(0, 1fr))`,
       }}
@@ -14,7 +16,7 @@ export default function Products() {
       {/* column headings */}
       {properties.map(({ id, name }) => {
         return (
-          <div key={`property-${id}`} className="font-semibold">
+          <div key={`property-${id}`} className={headerRowClass}>
             {name.slice(0, 1).toUpperCase() + name.slice(1)}
           </div>
         );
