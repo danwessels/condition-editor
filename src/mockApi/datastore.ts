@@ -1,11 +1,4 @@
-import { type Product } from "../types";
-
-interface Property {
-  id: number;
-  name: string;
-  type: string;
-  values?: string[];
-}
+import { type Product, type Property } from "../types";
 
 interface Operator {
   text: string;
