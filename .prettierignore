@@ -1,0 +1,6 @@
+# Ignore artifacts:
+dist
+coverage
+
+# Ignore lock file:
+package-lock.json
