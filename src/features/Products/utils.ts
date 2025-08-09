@@ -1,22 +1,31 @@
 import { type OperatorConditionParams } from "../../types";
 import { type State } from "./reducer";
-import { type MultiValue } from "react-select";
-import { type SelectOptionType } from "../../types";
+import { type MultiValue, type SingleValue } from "react-select";
+import {
+  type SelectOptionType,
+  type PropertyType,
+  type Property,
+} from "../../types";
 
 const products = window.datastore.getProducts();
+
+// Product table filtering utility functions
 
 export const checkMatchesOperatorCondition = (
   props: OperatorConditionParams,
 ) => {
   const { operator, productValue, comparisonValue } = props;
+  console.log("productValue", productValue);
 
   switch (operator) {
     case "equals":
       if (comparisonValue === "") return true;
       return productValue === comparisonValue;
     case "greater_than":
+      if (isNaN(comparisonValue)) return true;
       return productValue > comparisonValue;
     case "less_than":
+      if (isNaN(comparisonValue)) return true;
       return productValue < comparisonValue;
     case "any":
       return productValue !== null && productValue !== undefined;
@@ -26,6 +35,7 @@ export const checkMatchesOperatorCondition = (
       if (comparisonValue.length === 0) return true;
       return comparisonValue.includes(productValue);
     case "contains":
+      if (comparisonValue === "") return true;
       return (
         typeof productValue === "string" &&
         productValue.includes(comparisonValue)
@@ -37,14 +47,21 @@ export const checkMatchesOperatorCondition = (
 
 function buildOperatorParams(
   operator: string,
-  productValue: string | number,
+  productValue: string | number | undefined,
   selectedValues: MultiValue<SelectOptionType>,
   searchText: string,
 ): OperatorConditionParams {
+  if (productValue === undefined) {
+    return {
+      operator: operator as "none",
+      productValue: productValue as undefined,
+    };
+  }
+
   const isNumber = typeof productValue === "number";
   const parsedProductValue = isNumber
     ? productValue
-    : productValue.toLowerCase();
+    : productValue?.toLowerCase();
 
   if (operator === "in") {
     const comparisonValue = selectedValues.map(({ value }) => {
@@ -78,7 +95,7 @@ function buildOperatorParams(
     }
 
     return {
-      operator: operator as "any" | "none",
+      operator: operator as "any",
       productValue: parsedProductValue as string | number,
     };
   }
@@ -97,21 +114,68 @@ export function getFilteredProducts(state: State) {
         ({ property_id }) => property_id === propertyId,
       );
 
-      if (productProperty) {
-        // Parse the product value to match the expected type
-        const params = buildOperatorParams(
-          selectedOperator.value,
-          productProperty.value,
-          selectedValues,
-          searchText,
-        );
+      const params = buildOperatorParams(
+        selectedOperator.value,
+        productProperty ? productProperty?.value : productProperty,
+        selectedValues,
+        searchText,
+      );
 
-        return checkMatchesOperatorCondition(params);
-      }
-
-      return false;
+      return checkMatchesOperatorCondition(params);
     });
   } else {
     return products;
   }
+}
+
+// Product Filters utility functions
+
+const operatorsByPropertyType = {
+  string: ["equals", "any", "none", "in", "contains"],
+  number: ["equals", "greater_than", "less_than", "any", "none", "in"],
+  enumerated: ["equals", "any", "none", "in"],
+};
+
+export function getOperatorOptions(selectedPropertyType?: PropertyType) {
+  if (!selectedPropertyType) return [];
+  const operators = window.datastore.getOperators();
+  const validOperators = operatorsByPropertyType[selectedPropertyType];
+
+  return operators
+    .filter(({ id }) => validOperators.includes(id))
+    .map(({ id, text }) => ({
+      value: id,
+      label: text,
+    }));
+}
+
+export function getValueOptions(selectedPropertyValues?: string[] | null) {
+  if (!selectedPropertyValues || selectedPropertyValues?.length === 0)
+    return [];
+
+  return selectedPropertyValues.map((label) => ({
+    value: label,
+    label: label.slice(0, 1).toUpperCase() + label.slice(1),
+  }));
+}
+
+export function getPropertiesOptions() {
+  const properties = window.datastore.getProperties();
+
+  return properties.map(({ id, name }) => ({
+    value: id.toString(),
+    label: name,
+  }));
+}
+
+export function getSelectedProperty(
+  selectedProperty: SingleValue<SelectOptionType>,
+  allProperties: Property[],
+) {
+  if (selectedProperty?.value) {
+    return allProperties.find(
+      (property) => property.id === parseInt(selectedProperty!.value),
+    );
+  }
+  return null;
 }

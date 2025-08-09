@@ -40,8 +40,14 @@ type InOperator = {
 };
 
 type AnyOrNone = {
-  operator: "any" | "none";
-  productValue: string | number;
+  operator: "any";
+  productValue: string | number | undefined;
+  comparisonValue?: undefined;
+};
+
+type None = {
+  operator: "none";
+  productValue: undefined;
   comparisonValue?: undefined;
 };
 
@@ -49,4 +55,5 @@ export type OperatorConditionParams =
   | InOperator
   | StringComparison
   | NumberComparison
-  | AnyOrNone;
+  | AnyOrNone
+  | None;
