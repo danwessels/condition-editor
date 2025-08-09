@@ -1,10 +1,12 @@
 import Select, { type MultiValue, type SingleValue } from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 type OptionType = { value: string; label: string };
 
 interface BaseProps {
   options: OptionType[];
   placeholder?: string;
+  isCreatable?: boolean;
 }
 
 interface MultiSelectProps extends BaseProps {
@@ -26,6 +28,7 @@ export default function CustomSelect({
   onChange,
   placeholder,
   isMulti = false,
+  isCreatable = false,
   value,
 }: SelectProps) {
   function handleChange(
@@ -40,6 +43,33 @@ export default function CustomSelect({
         value as SingleValue<OptionType>,
       );
     }
+  }
+
+  function handleCreate(inputValue: string) {
+    const newOption = {
+      label: inputValue,
+      value: inputValue.toLowerCase().replace(" ", "_"),
+    };
+
+    if (isMulti && Array.isArray(value)) {
+      handleChange([...value, newOption]);
+    } else {
+      handleChange(newOption);
+    }
+  }
+
+  if (isCreatable) {
+    return (
+      <CreatableSelect
+        options={options}
+        isMulti={isMulti}
+        placeholder={placeholder}
+        className="w-full"
+        onChange={handleChange}
+        onCreateOption={handleCreate}
+        value={value}
+      />
+    );
   }
 
   return (

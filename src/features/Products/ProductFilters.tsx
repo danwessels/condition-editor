@@ -3,6 +3,7 @@ import { type MultiValue, type SingleValue } from "react-select";
 
 import { Select } from "../../components";
 import { type SelectOptionType, type PropertyType } from "../../types";
+import { type OperatorOptionType } from "./reducer";
 import { ProductContext } from "./context";
 
 const operatorsByPropertyType = {
@@ -28,8 +29,8 @@ function getValueOptions(selectedPropertyValues?: string[] | null) {
   if (!selectedPropertyValues || selectedPropertyValues?.length === 0)
     return [];
 
-  return selectedPropertyValues.map((label, index) => ({
-    value: index.toString(),
+  return selectedPropertyValues.map((label) => ({
+    value: label,
     label: label.slice(0, 1).toUpperCase() + label.slice(1),
   }));
 }
@@ -70,7 +71,7 @@ export default function ProductFilters() {
   function onSelectOperator(selected: SingleValue<SelectOptionType>) {
     dispatch({
       type: "update_operator",
-      value: selected,
+      value: selected as SingleValue<OperatorOptionType>,
     });
   }
 
@@ -88,9 +89,18 @@ export default function ProductFilters() {
     });
   }
 
-  const showAnyValueField =
-    state.selectedOperator?.value &&
-    !["any", "none"].includes(state.selectedOperator?.value);
+  const getInputType = () => {
+    if (selectedProperty?.type === "number") {
+      return "number";
+    }
+    return "text";
+  };
+
+  const operatorsToHideInput = ["any", "none", undefined];
+  const hideInput = operatorsToHideInput.includes(
+    state.selectedOperator?.value,
+  );
+  const inputClass = `w-full border border-slate-300 rounded-sm px-2 ${hideInput ? "opacity-0" : ""}`;
 
   return (
     <div className="flex gap-2 mb-4">
@@ -108,29 +118,31 @@ export default function ProductFilters() {
         key="operator-select"
         value={state.selectedOperator}
       />
-      {showAnyValueField && (
-        <>
-          {valueOptions?.length === 0 && (
-            <input
-              type="text"
-              placeholder="Enter value"
-              className="w-full border border-slate-300 rounded-sm px-2"
-              onChange={onChangeInputValue}
-              key="value-input"
-              value={state.searchText}
-            />
-          )}
-          {valueOptions?.length > 0 && (
-            <Select
-              options={valueOptions}
-              placeholder="Select value(s)"
-              onChange={onSelectValue}
-              isMulti={true}
-              key="value-select"
-              value={state.selectedValues}
-            />
-          )}
-        </>
+      {state.selectedOperator?.value !== "in" && (
+        <input
+          type={getInputType()}
+          placeholder="Enter value"
+          className={inputClass}
+          onChange={onChangeInputValue}
+          key="value-input"
+          value={state.searchText}
+          disabled={hideInput}
+        />
+      )}
+      {state.selectedOperator && state.selectedOperator?.value === "in" && (
+        <Select
+          options={valueOptions}
+          placeholder={
+            valueOptions?.length > 0
+              ? "Select value(s)"
+              : "Enter one or more values"
+          }
+          onChange={onSelectValue}
+          isMulti={true}
+          key="value-select"
+          value={state.selectedValues}
+          isCreatable={valueOptions?.length === 0} // Allow user to add options if is not enumerated and has no predefined values
+        />
       )}
     </div>
   );
