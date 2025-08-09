@@ -12,7 +12,9 @@ import {
   getSelectedProperty,
 } from "./utils";
 
-const fieldContainerClass = "w-1/3 h-auto";
+const fieldContainerClass = "w-full sm:w-1/2 md:w-1/3 h-auto pr-3 mb-3";
+const inputClass =
+  "w-full min-h-10 h-full border border-slate-300 rounded-sm px-2";
 
 export default function ProductFilters() {
   const [state, dispatch] = useContext(ProductContext);
@@ -71,11 +73,9 @@ export default function ProductFilters() {
     state.selectedOperator?.value,
   );
 
-  const inputClass = "w-full h-full border border-slate-300 rounded-sm px-2";
-
   return (
-    <div className="flex flex-row justify-between w-full items-start">
-      <div className="flex gap-2 mb-4 min-w-[50rem]">
+    <div className="flex flex-col sm:flex-row justify-between w-full items-start sm:gap-4">
+      <div className="flex flex-wrap max-w-[50rem] w-full">
         <div className={fieldContainerClass}>
           <Select
             options={propertyOptions}
