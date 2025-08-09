@@ -2,7 +2,14 @@ import { type Product, type Property } from "../types";
 
 interface Operator {
   text: string;
-  id: string;
+  id:
+    | "equals"
+    | "greater_than"
+    | "less_than"
+    | "any"
+    | "none"
+    | "in"
+    | "contains";
 }
 
 declare global {

@@ -1,16 +1,33 @@
 import { type MultiValue, type SingleValue } from "react-select";
 import { type SelectOptionType } from "../../types";
 
+export type OperatorOptionType = {
+  value:
+    | "in"
+    | "equals"
+    | "contains"
+    | "greater_than"
+    | "less_than"
+    | "any"
+    | "none";
+  label: string;
+};
+
 export interface State {
   selectedProperty: SingleValue<SelectOptionType>;
-  selectedOperator: SingleValue<SelectOptionType>;
+  selectedOperator: SingleValue<OperatorOptionType>;
   selectedValues: MultiValue<SelectOptionType>;
   searchText: string;
 }
 
 interface UpdateAction {
-  type: "update_property" | "update_operator";
+  type: "update_property";
   value: SingleValue<SelectOptionType>;
+}
+
+interface UpdateOperatorAction {
+  type: "update_operator";
+  value: SingleValue<OperatorOptionType>;
 }
 
 interface UpdateValueAction {
@@ -29,6 +46,7 @@ interface ClearAllAction {
 
 export type Action =
   | UpdateAction
+  | UpdateOperatorAction
   | UpdateValueAction
   | UpdateSearchAction
   | ClearAllAction;

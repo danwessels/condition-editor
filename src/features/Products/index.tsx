@@ -5,6 +5,7 @@ import reducer from "./reducer";
 
 import ProductRow from "./ProductRow";
 import ProductFilters from "./ProductFilters";
+import { getFilteredProducts } from "./utils";
 
 const initialState = {
   selectedProperty: null,
@@ -13,13 +14,14 @@ const initialState = {
   searchText: "",
 };
 
+const properties = window.datastore.getProperties();
+
 const headerRowClass = "font-semibold p-2";
 
 export default function Products() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const products = window.datastore.getProducts();
-  const properties = window.datastore.getProperties();
+  const filteredProducts = getFilteredProducts(state);
 
   return (
     <div>
@@ -40,7 +42,7 @@ export default function Products() {
             );
           })}
           {/* product rows */}
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <ProductRow key={product.id} product={product} />
           ))}
         </div>
