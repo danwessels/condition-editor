@@ -12,8 +12,8 @@ export const checkMatchesOperatorCondition = (
 
   switch (operator) {
     case "equals":
-      if (productValue === null || comparisonValue === "") return true;
-      return productValue == comparisonValue;
+      if (comparisonValue === "") return true;
+      return productValue === comparisonValue;
     case "greater_than":
       return productValue > comparisonValue;
     case "less_than":
@@ -23,6 +23,7 @@ export const checkMatchesOperatorCondition = (
     case "none":
       return productValue === null || productValue === undefined;
     case "in":
+      if (comparisonValue.length === 0) return true;
       return comparisonValue.includes(productValue);
     case "contains":
       return (
@@ -62,7 +63,7 @@ function buildOperatorParams(
 
     if (operator === "contains" || operator === "equals") {
       return {
-        operator: "contains",
+        operator: operator as "contains" | "equals",
         productValue: parsedProductValue as string,
         comparisonValue: comparisonValue as string,
       };

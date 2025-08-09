@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { type MultiValue, type SingleValue } from "react-select";
 
-import { Select } from "../../components";
+import { Select, Button } from "../../components";
 import { type SelectOptionType, type PropertyType } from "../../types";
 import { type OperatorOptionType } from "./reducer";
 import { ProductContext } from "./context";
@@ -11,6 +11,8 @@ const operatorsByPropertyType = {
   number: ["equals", "greater_than", "less_than", "any", "none", "in"],
   enumerated: ["equals", "any", "none", "in"],
 };
+
+const fieldContainerClass = "w-1/3 h-auto";
 
 function getOperatorOptions(selectedPropertyType?: PropertyType) {
   if (!selectedPropertyType) return [];
@@ -89,6 +91,10 @@ export default function ProductFilters() {
     });
   }
 
+  function clearFilters() {
+    dispatch({ type: "clear_all" });
+  }
+
   const getInputType = () => {
     if (selectedProperty?.type === "number") {
       return "number";
@@ -96,54 +102,66 @@ export default function ProductFilters() {
     return "text";
   };
 
-  const operatorsToHideInput = ["any", "none", undefined];
+  const operatorsToHideInput = ["any", "none", "in", undefined];
   const hideInput = operatorsToHideInput.includes(
     state.selectedOperator?.value,
   );
-  const inputClass = `w-full border border-slate-300 rounded-sm px-2 ${hideInput ? "opacity-0" : ""}`;
+
+  const inputClass = "w-full h-full border border-slate-300 rounded-sm px-2";
 
   return (
-    <div className="flex gap-2 mb-4">
-      <Select
-        options={propertyOptions}
-        placeholder="Select property"
-        onChange={onSelectProperty}
-        key="property-select"
-        value={state.selectedProperty}
-      />
-      <Select
-        options={operatorOptions}
-        placeholder="Select operator"
-        onChange={onSelectOperator}
-        key="operator-select"
-        value={state.selectedOperator}
-      />
-      {state.selectedOperator?.value !== "in" && (
-        <input
-          type={getInputType()}
-          placeholder="Enter value"
-          className={inputClass}
-          onChange={onChangeInputValue}
-          key="value-input"
-          value={state.searchText}
-          disabled={hideInput}
-        />
-      )}
-      {state.selectedOperator && state.selectedOperator?.value === "in" && (
-        <Select
-          options={valueOptions}
-          placeholder={
-            valueOptions?.length > 0
-              ? "Select value(s)"
-              : "Enter one or more values"
-          }
-          onChange={onSelectValue}
-          isMulti={true}
-          key="value-select"
-          value={state.selectedValues}
-          isCreatable={valueOptions?.length === 0} // Allow user to add options if is not enumerated and has no predefined values
-        />
-      )}
+    <div className="flex flex-row justify-between w-full items-start">
+      <div className="flex gap-2 mb-4 min-w-[50rem]">
+        <div className={fieldContainerClass}>
+          <Select
+            options={propertyOptions}
+            placeholder="Select a property"
+            onChange={onSelectProperty}
+            key="property-select"
+            value={state.selectedProperty}
+          />
+        </div>
+        <div className={fieldContainerClass}>
+          {state.selectedProperty && (
+            <Select
+              options={operatorOptions}
+              placeholder="Select an operator"
+              onChange={onSelectOperator}
+              key="operator-select"
+              value={state.selectedOperator}
+            />
+          )}
+        </div>
+        <div className={fieldContainerClass}>
+          {!hideInput && (
+            <input
+              name="comparison-value"
+              type={getInputType()}
+              placeholder="Enter value"
+              className={inputClass}
+              onChange={onChangeInputValue}
+              key="value-input"
+              value={state.searchText}
+            />
+          )}
+          {state.selectedOperator && state.selectedOperator?.value === "in" && (
+            <Select
+              options={valueOptions}
+              placeholder={
+                valueOptions?.length > 0
+                  ? "Select one or more values"
+                  : "Enter one or more values"
+              }
+              onChange={onSelectValue}
+              isMulti={true}
+              key="value-select"
+              value={state.selectedValues}
+              isCreatable={valueOptions?.length === 0} // Allow user to add options if is not enumerated and has no predefined values
+            />
+          )}
+        </div>
+      </div>
+      <Button onClick={clearFilters} label="Clear filters" />
     </div>
   );
 }
