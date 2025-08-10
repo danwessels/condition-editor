@@ -205,8 +205,10 @@ export function getSelectedProperty(
   allProperties: Property[],
 ) {
   if (selectedProperty?.value) {
-    return allProperties.find(
-      (property) => property.id === parseInt(selectedProperty!.value),
+    return (
+      allProperties.find(
+        (property) => property.id === parseInt(selectedProperty!.value),
+      ) ?? null
     );
   }
   return null;
