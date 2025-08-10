@@ -39,15 +39,15 @@ type InOperator = {
   comparisonValue: Array<string | number>;
 };
 
-type AnyOrNone = {
+type Any = {
   operator: "any";
-  productValue: string | number | undefined;
+  productValue: string | number | undefined | null;
   comparisonValue?: undefined;
 };
 
 type None = {
   operator: "none";
-  productValue: undefined;
+  productValue: undefined | null;
   comparisonValue?: undefined;
 };
 
@@ -55,5 +55,5 @@ export type OperatorConditionParams =
   | InOperator
   | StringComparison
   | NumberComparison
-  | AnyOrNone
+  | Any
   | None;

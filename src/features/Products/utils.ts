@@ -60,17 +60,17 @@ function buildOperatorParams(
   selectedValues: MultiValue<SelectOptionType>,
   searchText: string,
 ): OperatorConditionParams {
-  if (productValue === undefined) {
+  if (operator === OPERATOR_TYPES.NONE) {
     return {
       operator: OPERATOR_TYPES.NONE,
-      productValue: productValue as undefined,
+      productValue: productValue as undefined | null,
     };
   }
 
   const isNumber = typeof productValue === "number";
   const parsedProductValue = isNumber
     ? productValue
-    : productValue?.toLowerCase();
+    : (productValue?.toLowerCase() ?? "");
 
   if (operator === OPERATOR_TYPES.IN) {
     const comparisonValue = selectedValues.map(({ value }) => {
@@ -205,8 +205,10 @@ export function getSelectedProperty(
   allProperties: Property[],
 ) {
   if (selectedProperty?.value) {
-    return allProperties.find(
-      (property) => property.id === parseInt(selectedProperty!.value),
+    return (
+      allProperties.find(
+        (property) => property.id === parseInt(selectedProperty!.value),
+      ) ?? null
     );
   }
   return null;
