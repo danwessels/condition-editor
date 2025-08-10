@@ -7,8 +7,6 @@ import {
   type Property,
 } from "../../types";
 
-const products = window.datastore.getProducts();
-
 const OPERATOR_TYPES = {
   EQUALS: "equals",
   CONTAINS: "contains",
@@ -116,6 +114,8 @@ function buildOperatorParams(
 }
 
 export function getFilteredProducts(state: State) {
+  const products = window?.datastore?.getProducts() || [];
+
   const { selectedProperty, selectedOperator, selectedValues, searchText } =
     state;
 
