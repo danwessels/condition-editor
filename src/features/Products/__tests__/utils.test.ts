@@ -4,8 +4,14 @@ import {
   getValueOptions,
   getPropertiesOptions,
   getSelectedProperty,
+  getFilteredProducts,
 } from "../utils";
-import type { OperatorConditionParams, Property } from "../../../types";
+import type { State } from "../reducer";
+import type {
+  OperatorConditionParams,
+  Property,
+  Product,
+} from "../../../types";
 
 // Get the global mock datastore from setupTests
 declare const mockDatastore: {
@@ -14,9 +20,209 @@ declare const mockDatastore: {
   getProducts: jest.Mock;
 };
 
-describe("utils.ts", () => {
+describe("products utils", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe("getFilteredProducts", () => {
+    const mockProducts: Product[] = [
+      {
+        id: 1,
+        property_values: [
+          { property_id: 1, value: "Headphones" },
+          { property_id: 2, value: "black" },
+          { property_id: 3, value: 5 },
+        ],
+      },
+      {
+        id: 2,
+        property_values: [
+          { property_id: 1, value: "Mouse" },
+          { property_id: 2, value: "white" },
+          { property_id: 3, value: 3 },
+        ],
+      },
+      {
+        id: 3,
+        property_values: [
+          { property_id: 1, value: "Keyboard" },
+          { property_id: 2, value: "black" },
+          { property_id: 3, value: 4 },
+        ],
+      },
+    ];
+
+    beforeEach(() => {
+      mockDatastore.getProducts.mockReturnValue(mockProducts);
+    });
+
+    it("should return all products when no filters are applied", () => {
+      const state: State = {
+        selectedProperty: null,
+        selectedOperator: null,
+        selectedValues: [],
+        searchText: "",
+      };
+
+      const result = getFilteredProducts(state);
+      expect(result).toEqual(mockProducts);
+    });
+
+    it("should return all products when only property is selected", () => {
+      const state: State = {
+        selectedProperty: { value: "1", label: "Name" },
+        selectedOperator: null,
+        selectedValues: [],
+        searchText: "",
+      };
+
+      const result = getFilteredProducts(state);
+      expect(result).toEqual(mockProducts);
+    });
+
+    it("should filter products using equals operator", () => {
+      const state: State = {
+        selectedProperty: { value: "2", label: "Color" },
+        selectedOperator: { value: "equals", label: "Equals" },
+        selectedValues: [],
+        searchText: "black",
+      };
+
+      const result = getFilteredProducts(state);
+      expect(result).toHaveLength(2);
+      expect(result.map((p) => p.id)).toEqual([1, 3]);
+    });
+
+    it("should filter products using contains operator", () => {
+      const state: State = {
+        selectedProperty: { value: "1", label: "Name" },
+        selectedOperator: { value: "contains", label: "Contains" },
+        selectedValues: [],
+        searchText: "head",
+      };
+
+      const result = getFilteredProducts(state);
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe(1);
+    });
+
+    it("should filter products using greater_than operator", () => {
+      const state: State = {
+        selectedProperty: { value: "3", label: "Rating" },
+        selectedOperator: { value: "greater_than", label: "Greater Than" },
+        selectedValues: [],
+        searchText: "3",
+      };
+
+      const result = getFilteredProducts(state);
+      expect(result).toHaveLength(2);
+      expect(result.map((p) => p.id)).toEqual([1, 3]);
+    });
+
+    it("should filter products using less_than operator", () => {
+      const state: State = {
+        selectedProperty: { value: "3", label: "Rating" },
+        selectedOperator: { value: "less_than", label: "Less Than" },
+        selectedValues: [],
+        searchText: "4",
+      };
+
+      const result = getFilteredProducts(state);
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe(2);
+    });
+
+    it("should filter products using in operator", () => {
+      const state: State = {
+        selectedProperty: { value: "2", label: "Color" },
+        selectedOperator: { value: "in", label: "In" },
+        selectedValues: [
+          { value: "black", label: "Black" },
+          { value: "white", label: "White" },
+        ],
+        searchText: "",
+      };
+
+      const result = getFilteredProducts(state);
+      expect(result).toHaveLength(3); // All products have either black or white
+    });
+
+    it("should filter products using any operator", () => {
+      const state: State = {
+        selectedProperty: { value: "1", label: "Name" },
+        selectedOperator: { value: "any", label: "Any" },
+        selectedValues: [],
+        searchText: "",
+      };
+
+      const result = getFilteredProducts(state);
+      expect(result).toHaveLength(3); // All products have a name
+    });
+
+    it("should handle products with missing property values", () => {
+      const productsWithMissing: Product[] = [
+        ...mockProducts,
+        {
+          id: 4,
+          property_values: [
+            { property_id: 1, value: "Speaker" },
+            // Missing property_id 2 and 3
+          ],
+        },
+      ];
+
+      mockDatastore.getProducts.mockReturnValue(productsWithMissing);
+
+      const state: State = {
+        selectedProperty: { value: "2", label: "Color" },
+        selectedOperator: { value: "none", label: "None" },
+        selectedValues: [],
+        searchText: "",
+      };
+
+      const result = getFilteredProducts(state);
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe(4);
+    });
+
+    it("should return empty array when datastore is not available", () => {
+      // Temporarily set window.datastore to undefined to test the fallback
+      const originalDatastore = window.datastore;
+      Object.defineProperty(window, "datastore", {
+        value: undefined,
+        writable: true,
+      });
+
+      const state: State = {
+        selectedProperty: { value: "1", label: "Name" },
+        selectedOperator: { value: "equals", label: "Equals" },
+        selectedValues: [],
+        searchText: "test",
+      };
+
+      const result = getFilteredProducts(state);
+      expect(result).toEqual([]);
+
+      // Restore original datastore
+      Object.defineProperty(window, "datastore", {
+        value: originalDatastore,
+        writable: true,
+      });
+    });
+
+    it("should handle case-insensitive string filtering", () => {
+      const state: State = {
+        selectedProperty: { value: "1", label: "Name" },
+        selectedOperator: { value: "equals", label: "Equals" },
+        selectedValues: [],
+        searchText: "HEADPHONES",
+      };
+
+      const result = getFilteredProducts(state);
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe(1);
+    });
   });
 
   describe("checkMatchesOperatorCondition", () => {

@@ -2,7 +2,7 @@ import reducer, { type State, type Action } from "../reducer";
 import type { SelectOptionType } from "../../../types";
 import type { OperatorOptionType } from "../reducer";
 
-describe("reducer", () => {
+describe("products state reducer", () => {
   const initialState: State = {
     selectedProperty: null,
     selectedOperator: null,
