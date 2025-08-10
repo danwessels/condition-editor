@@ -23,7 +23,7 @@ export default function ProductRow({ product }: { product: Product }) {
             className={rowClass}
             role="cell"
           >
-            {propertyValue ?? <span className="text-slate-400 italic">—</span>}
+            {propertyValue ?? <span className="text-slate-400">—</span>}
           </div>
         );
       })}
