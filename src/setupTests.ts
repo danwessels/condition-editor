@@ -1,3 +1,4 @@
+import "@testing-library/jest-dom";
 // Global test setup - runs before all tests
 
 // Create mock datastore for tests
