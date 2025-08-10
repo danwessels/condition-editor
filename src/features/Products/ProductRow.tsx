@@ -14,18 +14,19 @@ export default function ProductRow({ product }: { product: Product }) {
   };
 
   return (
-    <>
+    <div role="row" className="contents">
       {properties.map(({ id }: { id: number }) => {
         const propertyValue = getPropertyValue(product, id);
         return (
           <div
             key={`product-${product.id}-property-${id}`}
             className={rowClass}
+            role="cell"
           >
-            {propertyValue}
+            {propertyValue ?? <span className="text-slate-400">—</span>}
           </div>
         );
       })}
-    </>
+    </div>
   );
 }

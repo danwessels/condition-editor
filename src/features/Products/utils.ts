@@ -7,7 +7,17 @@ import {
   type Property,
 } from "../../types";
 
-const products = window.datastore.getProducts();
+const OPERATOR_TYPES = {
+  EQUALS: "equals",
+  CONTAINS: "contains",
+  GREATER_THAN: "greater_than",
+  LESS_THAN: "less_than",
+  IN: "in",
+  ANY: "any",
+  NONE: "none",
+} as const;
+
+export type OperatorType = (typeof OPERATOR_TYPES)[keyof typeof OPERATOR_TYPES];
 
 // Product table filtering utility functions
 
@@ -15,26 +25,25 @@ export const checkMatchesOperatorCondition = (
   props: OperatorConditionParams,
 ) => {
   const { operator, productValue, comparisonValue } = props;
-  console.log("productValue", productValue);
 
   switch (operator) {
-    case "equals":
+    case OPERATOR_TYPES.EQUALS:
       if (comparisonValue === "") return true;
       return productValue === comparisonValue;
-    case "greater_than":
+    case OPERATOR_TYPES.GREATER_THAN:
       if (isNaN(comparisonValue)) return true;
       return productValue > comparisonValue;
-    case "less_than":
+    case OPERATOR_TYPES.LESS_THAN:
       if (isNaN(comparisonValue)) return true;
       return productValue < comparisonValue;
-    case "any":
+    case OPERATOR_TYPES.ANY:
       return productValue !== null && productValue !== undefined;
-    case "none":
+    case OPERATOR_TYPES.NONE:
       return productValue === null || productValue === undefined;
-    case "in":
+    case OPERATOR_TYPES.IN:
       if (comparisonValue.length === 0) return true;
       return comparisonValue.includes(productValue);
-    case "contains":
+    case OPERATOR_TYPES.CONTAINS:
       if (comparisonValue === "") return true;
       return (
         typeof productValue === "string" &&
@@ -53,7 +62,7 @@ function buildOperatorParams(
 ): OperatorConditionParams {
   if (productValue === undefined) {
     return {
-      operator: operator as "none",
+      operator: OPERATOR_TYPES.NONE,
       productValue: productValue as undefined,
     };
   }
@@ -63,13 +72,13 @@ function buildOperatorParams(
     ? productValue
     : productValue?.toLowerCase();
 
-  if (operator === "in") {
+  if (operator === OPERATOR_TYPES.IN) {
     const comparisonValue = selectedValues.map(({ value }) => {
       return isNumber ? parseInt(value) : value;
     });
 
     return {
-      operator: "in",
+      operator: OPERATOR_TYPES.IN,
       productValue: parsedProductValue,
       comparisonValue: comparisonValue as string[] | number[],
     };
@@ -78,7 +87,10 @@ function buildOperatorParams(
       ? parseInt(searchText)
       : searchText.toLowerCase();
 
-    if (operator === "contains" || operator === "equals") {
+    if (
+      operator === OPERATOR_TYPES.CONTAINS ||
+      operator === OPERATOR_TYPES.EQUALS
+    ) {
       return {
         operator: operator as "contains" | "equals",
         productValue: parsedProductValue as string,
@@ -95,13 +107,15 @@ function buildOperatorParams(
     }
 
     return {
-      operator: operator as "any",
+      operator: OPERATOR_TYPES.ANY,
       productValue: parsedProductValue as string | number,
     };
   }
 }
 
 export function getFilteredProducts(state: State) {
+  const products = window?.datastore?.getProducts() || [];
+
   const { selectedProperty, selectedOperator, selectedValues, searchText } =
     state;
 
@@ -130,10 +144,28 @@ export function getFilteredProducts(state: State) {
 
 // Product Filters utility functions
 
-const operatorsByPropertyType = {
-  string: ["equals", "any", "none", "in", "contains"],
-  number: ["equals", "greater_than", "less_than", "any", "none", "in"],
-  enumerated: ["equals", "any", "none", "in"],
+const operatorsByPropertyType: Record<PropertyType, OperatorType[]> = {
+  string: [
+    OPERATOR_TYPES.EQUALS,
+    OPERATOR_TYPES.ANY,
+    OPERATOR_TYPES.NONE,
+    OPERATOR_TYPES.IN,
+    OPERATOR_TYPES.CONTAINS,
+  ],
+  number: [
+    OPERATOR_TYPES.EQUALS,
+    OPERATOR_TYPES.GREATER_THAN,
+    OPERATOR_TYPES.LESS_THAN,
+    OPERATOR_TYPES.ANY,
+    OPERATOR_TYPES.NONE,
+    OPERATOR_TYPES.IN,
+  ],
+  enumerated: [
+    OPERATOR_TYPES.EQUALS,
+    OPERATOR_TYPES.ANY,
+    OPERATOR_TYPES.NONE,
+    OPERATOR_TYPES.IN,
+  ],
 };
 
 export function getOperatorOptions(selectedPropertyType?: PropertyType) {

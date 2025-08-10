@@ -1,15 +1,10 @@
 import { type MultiValue, type SingleValue } from "react-select";
 import { type SelectOptionType } from "../../types";
 
+import { type OperatorType } from "./utils";
+
 export type OperatorOptionType = {
-  value:
-    | "in"
-    | "equals"
-    | "contains"
-    | "greater_than"
-    | "less_than"
-    | "any"
-    | "none";
+  value: OperatorType;
   label: string;
 };
 
