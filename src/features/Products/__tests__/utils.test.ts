@@ -9,16 +9,19 @@ import {
 import type { State } from "../reducer";
 import type {
   OperatorConditionParams,
-  Property,
   Product,
+  Property,
+  Operator,
 } from "../../../types";
 
-// Get the global mock datastore from setupTests
+// Get global mock data from setupTests
 declare const mockDatastore: {
   getOperators: jest.Mock;
   getProperties: jest.Mock;
   getProducts: jest.Mock;
 };
+declare const mockOperators: Operator[];
+declare const mockProperties: Property[];
 
 const initialState: State = {
   selectedProperty: null,
@@ -397,19 +400,11 @@ describe("products utils", () => {
 
   describe("getOperatorOptions", () => {
     beforeEach(() => {
-      mockDatastore.getOperators.mockReturnValue([
-        { id: "equals", text: "Equals" },
-        { id: "contains", text: "Contains" },
-        { id: "greater_than", text: "Greater Than" },
-        { id: "less_than", text: "Less Than" },
-        { id: "any", text: "Any" },
-        { id: "none", text: "None" },
-        { id: "in", text: "In" },
-      ]);
+      mockDatastore.getOperators.mockReturnValue(mockOperators);
     });
 
     it("should return correct operators for string property type", () => {
-      const result = getOperatorOptions(mockDatastore.getOperators(), "string");
+      const result = getOperatorOptions(mockOperators, "string");
       const expectedOperators = ["equals", "any", "none", "in", "contains"];
 
       expect(result).toHaveLength(5);
@@ -419,7 +414,7 @@ describe("products utils", () => {
     });
 
     it("should return correct operators for number property type", () => {
-      const result = getOperatorOptions(mockDatastore.getOperators(), "number");
+      const result = getOperatorOptions(mockOperators, "number");
       const expectedOperators = [
         "equals",
         "greater_than",
@@ -436,10 +431,7 @@ describe("products utils", () => {
     });
 
     it("should return correct operators for enumerated property type", () => {
-      const result = getOperatorOptions(
-        mockDatastore.getOperators(),
-        "enumerated",
-      );
+      const result = getOperatorOptions(mockOperators, "enumerated");
       const expectedOperators = ["equals", "any", "none", "in"];
 
       expect(result).toHaveLength(4);
@@ -449,10 +441,7 @@ describe("products utils", () => {
     });
 
     it("should return empty array when no property type is provided", () => {
-      const result = getOperatorOptions(
-        mockDatastore.getOperators(),
-        undefined,
-      );
+      const result = getOperatorOptions(mockOperators, undefined);
       expect(result).toEqual([]);
     });
   });
@@ -478,27 +467,16 @@ describe("products utils", () => {
 
   describe("getPropertiesOptions", () => {
     it("should return formatted property options", () => {
-      const mockProperties = [
-        { id: 1, name: "color", type: "string" },
-        { id: 2, name: "size", type: "number" },
-      ];
-
-      mockDatastore.getProperties.mockReturnValue(mockProperties);
-
-      const result = getPropertiesOptions(mockDatastore.getProperties());
+      const result = getPropertiesOptions(mockProperties);
       expect(result).toEqual([
         { value: "1", label: "color" },
         { value: "2", label: "size" },
+        { value: "3", label: "price" },
       ]);
     });
   });
 
   describe("getSelectedProperty", () => {
-    const mockProperties: Property[] = [
-      { id: 1, name: "color", type: "string" },
-      { id: 2, name: "size", type: "number" },
-    ];
-
     it("should return the correct property when found", () => {
       const selectedProperty = { value: "1", label: "color" };
       const result = getSelectedProperty(selectedProperty, mockProperties);

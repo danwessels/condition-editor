@@ -1,27 +1,12 @@
 import { render, screen } from "@testing-library/react";
-import ProductRow from "../ProductRow";
-import { ProductContext } from "../context";
-import type { Product, Property } from "../../../types";
+import type { Product } from "../../../types";
 import type { State } from "../reducer";
+import { ProductContext } from "../context";
+import ProductRow from "../ProductRow";
+import type { Property } from "../../../types";
 
-// Mock the datastore
-const mockProperties: Property[] = [
-  { id: 1, name: "color", type: "string", values: ["red", "blue", "green"] },
-  { id: 2, name: "size", type: "string", values: ["small", "medium", "large"] },
-  { id: 3, name: "price", type: "number", values: [] },
-];
-
-const mockDatastore = {
-  getProperties: jest.fn(() => mockProperties),
-  getProducts: jest.fn(() => []),
-  getOperators: jest.fn(() => []),
-};
-
-// Mock window.datastore
-Object.defineProperty(window, "datastore", {
-  value: mockDatastore,
-  writable: true,
-});
+// Get global mock data from setupTests
+declare const mockProperties: Property[];
 
 describe("ProductRow Component", () => {
   const mockProduct: Product = {

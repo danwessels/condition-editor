@@ -1,6 +1,12 @@
 import reducer, { type State, type Action } from "../reducer";
 import type { SelectOptionType } from "../../../types";
 import type { OperatorOptionType } from "../reducer";
+import type { Product, Property, Operator } from "../../../types";
+
+// Get global mock data from setupTests
+declare const mockOperators: Operator[];
+declare const mockProperties: Property[];
+declare const mockProducts: Product[];
 
 describe("products state reducer", () => {
   const initialState: State = {
@@ -8,9 +14,9 @@ describe("products state reducer", () => {
     selectedOperator: null,
     selectedValues: [],
     searchText: "",
-    properties: [],
-    operators: [],
-    products: [],
+    properties: mockProperties,
+    operators: mockOperators,
+    products: mockProducts,
   };
 
   describe("update_property action", () => {

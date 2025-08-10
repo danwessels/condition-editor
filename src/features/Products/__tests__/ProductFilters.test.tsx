@@ -3,65 +3,11 @@ import userEvent from "@testing-library/user-event";
 import { ProductContext } from "../context";
 import ProductFilters from "../ProductFilters";
 import type { State } from "../reducer";
-import type { Property } from "../../../types";
+import type { Property, Operator } from "../../../types";
 
-// Mock the datastore
-const mockProperties: Property[] = [
-  { id: 1, name: "color", type: "string", values: ["red", "blue", "green"] },
-  { id: 2, name: "size", type: "string", values: ["small", "medium", "large"] },
-  { id: 3, name: "price", type: "number", values: [] },
-];
-
-const mockDatastore = {
-  getProperties: jest.fn(() => mockProperties),
-  getProducts: jest.fn(() => []),
-  getOperators: jest.fn(() => []),
-};
-
-// Mock window.datastore
-Object.defineProperty(window, "datastore", {
-  value: mockDatastore,
-  writable: true,
-});
-
-// Mock utils functions
-jest.mock("../utils", () => ({
-  getOperatorOptions: jest.fn((type) => {
-    if (type === "string") {
-      return [
-        { value: "equals", label: "Equals" },
-        { value: "contains", label: "Contains" },
-        { value: "in", label: "In" },
-      ];
-    }
-    if (type === "number") {
-      return [
-        { value: "equals", label: "Equals" },
-        { value: "greater_than", label: "Greater Than" },
-        { value: "less_than", label: "Less Than" },
-      ];
-    }
-    return [];
-  }),
-  getValueOptions: jest.fn((values: string[]) => {
-    if (!values || values.length === 0) return [];
-    return values.map((v: string) => ({ value: v, label: v }));
-  }),
-  getPropertiesOptions: jest.fn(() =>
-    mockProperties.map((p) => ({ value: p.id.toString(), label: p.name })),
-  ),
-  getSelectedProperty: jest.fn(
-    (
-      selectedProperty: { value: string; label: string } | null,
-      allProperties: Property[],
-    ) => {
-      if (!selectedProperty) return null;
-      return allProperties.find(
-        (p: Property) => p.id.toString() === selectedProperty.value,
-      );
-    },
-  ),
-}));
+// Get global mock data from setupTests
+declare const mockProperties: Property[];
+declare const mockOperators: Operator[];
 
 describe("ProductFilters Component", () => {
   const initialState: State = {
@@ -70,7 +16,7 @@ describe("ProductFilters Component", () => {
     selectedValues: [],
     searchText: "",
     properties: mockProperties,
-    operators: [],
+    operators: mockOperators,
     products: [],
   };
 
