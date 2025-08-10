@@ -26,7 +26,6 @@ export const checkMatchesOperatorCondition = (
   props: OperatorConditionParams,
 ) => {
   const { operator, productValue, comparisonValue } = props;
-
   switch (operator) {
     case OPERATOR_TYPES.EQUALS:
       if (comparisonValue === "") return true;
@@ -109,7 +108,7 @@ function buildOperatorParams(
 
     return {
       operator: OPERATOR_TYPES.ANY,
-      productValue: parsedProductValue as string | number,
+      productValue: productValue as string | number | undefined,
     };
   }
 }

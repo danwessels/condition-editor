@@ -27,9 +27,10 @@ export default function Products() {
   return (
     <div>
       <ProductContext value={[state, dispatch]}>
+        <h1 className="mb-5">Products</h1>
         <ProductFilters />
         <div
-          className="grid border-1 border-slate-300 rounded-sm mt-4 overflow-x-auto"
+          className="grid border-1 border-slate-300 rounded-sm  overflow-x-auto"
           style={{
             gridTemplateColumns: `repeat(${state.properties.length}, minmax(100px, 1fr))`,
           }}
@@ -49,9 +50,15 @@ export default function Products() {
             );
           })}
           {/* product rows */}
-          {filteredProducts.map((product) => (
-            <ProductRow key={product.id} product={product} />
-          ))}
+          {filteredProducts?.length > 0 &&
+            filteredProducts.map((product) => (
+              <ProductRow key={product.id} product={product} />
+            ))}
+          {filteredProducts?.length === 0 && (
+            <div className="col-span-full p-4 text-center text-slate-500">
+              No products match the current filters.
+            </div>
+          )}
         </div>
       </ProductContext>
     </div>
