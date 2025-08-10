@@ -1,10 +1,4 @@
-import { type Product, type Property } from "../types";
-import { type OperatorType } from "../features/Products/utils";
-
-interface Operator {
-  text: string;
-  id: OperatorType;
-}
+import { type Product, type Property, type Operator } from "../types";
 
 declare global {
   interface Window {

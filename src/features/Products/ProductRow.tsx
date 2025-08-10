@@ -1,9 +1,11 @@
 import { type Product } from "../../types";
+import { ProductContext } from "./context";
+import { useContext } from "react";
 
 const rowClass = "border-t-1 border-slate-200 p-2";
 
 export default function ProductRow({ product }: { product: Product }) {
-  const properties = window.datastore.getProperties();
+  const [state] = useContext(ProductContext);
 
   const getPropertyValue = (product: Product, propertyId: number) => {
     const propertyValue = product.property_values.find(
@@ -15,7 +17,7 @@ export default function ProductRow({ product }: { product: Product }) {
 
   return (
     <div role="row" className="contents">
-      {properties.map(({ id }: { id: number }) => {
+      {state.properties.map(({ id }: { id: number }) => {
         const propertyValue = getPropertyValue(product, id);
         return (
           <div

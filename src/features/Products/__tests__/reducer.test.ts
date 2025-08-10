@@ -8,6 +8,9 @@ describe("products state reducer", () => {
     selectedOperator: null,
     selectedValues: [],
     searchText: "",
+    properties: [],
+    operators: [],
+    products: [],
   };
 
   describe("update_property action", () => {
@@ -19,6 +22,7 @@ describe("products state reducer", () => {
       };
 
       const previousState: State = {
+        ...initialState,
         selectedProperty: { value: "2", label: "Size" },
         selectedOperator: { value: "equals", label: "Equals" },
         selectedValues: [{ value: "red", label: "Red" }],
@@ -28,6 +32,7 @@ describe("products state reducer", () => {
       const newState = reducer(previousState, action);
 
       expect(newState).toEqual({
+        ...initialState,
         selectedProperty: property,
         selectedOperator: null,
         selectedValues: [],
@@ -44,9 +49,9 @@ describe("products state reducer", () => {
       const newState = reducer(initialState, action);
 
       expect(newState).toEqual({
+        ...initialState,
         selectedProperty: null,
         selectedOperator: null,
-        selectedValues: [],
         searchText: "",
       });
     });
@@ -64,6 +69,7 @@ describe("products state reducer", () => {
       };
 
       const previousState: State = {
+        ...initialState,
         selectedProperty: { value: "1", label: "Color" },
         selectedOperator: { value: "equals", label: "Equals" },
         selectedValues: [{ value: "red", label: "Red" }],
@@ -73,6 +79,7 @@ describe("products state reducer", () => {
       const newState = reducer(previousState, action);
 
       expect(newState).toEqual({
+        ...initialState,
         selectedProperty: { value: "1", label: "Color" },
         selectedOperator: operator,
         selectedValues: [],
@@ -89,9 +96,9 @@ describe("products state reducer", () => {
       const newState = reducer(initialState, action);
 
       expect(newState).toEqual({
+        ...initialState,
         selectedProperty: null,
         selectedOperator: null,
-        selectedValues: [],
         searchText: "",
       });
     });
@@ -109,15 +116,16 @@ describe("products state reducer", () => {
       };
 
       const previousState: State = {
+        ...initialState,
         selectedProperty: { value: "1", label: "Color" },
         selectedOperator: { value: "in", label: "In" },
-        selectedValues: [],
         searchText: "test",
       };
 
       const newState = reducer(previousState, action);
 
       expect(newState).toEqual({
+        ...initialState,
         selectedProperty: { value: "1", label: "Color" },
         selectedOperator: { value: "in", label: "In" },
         selectedValues: values,
@@ -149,6 +157,7 @@ describe("products state reducer", () => {
       };
 
       const previousState: State = {
+        ...initialState,
         selectedProperty: { value: "1", label: "Color" },
         selectedOperator: { value: "contains", label: "Contains" },
         selectedValues: [{ value: "red", label: "Red" }],
@@ -158,6 +167,7 @@ describe("products state reducer", () => {
       const newState = reducer(previousState, action);
 
       expect(newState).toEqual({
+        ...initialState,
         selectedProperty: { value: "1", label: "Color" },
         selectedOperator: { value: "contains", label: "Contains" },
         selectedValues: [{ value: "red", label: "Red" }],
@@ -187,6 +197,7 @@ describe("products state reducer", () => {
       };
 
       const previousState: State = {
+        ...initialState,
         selectedProperty: { value: "1", label: "Color" },
         selectedOperator: { value: "equals", label: "Equals" },
         selectedValues: [{ value: "red", label: "Red" }],
@@ -196,6 +207,7 @@ describe("products state reducer", () => {
       const newState = reducer(previousState, action);
 
       expect(newState).toEqual({
+        ...initialState,
         selectedProperty: null,
         selectedOperator: null,
         selectedValues: [],

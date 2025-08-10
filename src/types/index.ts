@@ -1,6 +1,13 @@
+import { type OperatorType } from "../features/Products/utils";
+
 interface PropertyProduct {
   property_id: number;
   value: string | number;
+}
+
+export interface Operator {
+  text: string;
+  id: OperatorType;
 }
 
 export interface Product {

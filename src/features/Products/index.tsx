@@ -12,9 +12,10 @@ const initialState = {
   selectedOperator: null,
   selectedValues: [],
   searchText: "",
+  properties: window?.datastore?.getProperties() || [],
+  operators: window?.datastore?.getOperators() || [],
+  products: window?.datastore?.getProducts() || [],
 };
-
-const properties = window.datastore.getProperties();
 
 const headerRowClass = "font-semibold p-2 bg-slate-100";
 
@@ -30,13 +31,13 @@ export default function Products() {
         <div
           className="grid border-1 border-slate-300 rounded-sm mt-4 overflow-x-auto"
           style={{
-            gridTemplateColumns: `repeat(${properties.length}, minmax(100px, 1fr))`,
+            gridTemplateColumns: `repeat(${state.properties.length}, minmax(100px, 1fr))`,
           }}
           role="table"
           aria-label="Product data table"
         >
           {/* column headings */}
-          {properties.map(({ id, name }) => {
+          {state.properties.map(({ id, name }) => {
             return (
               <div
                 key={`property-${id}`}

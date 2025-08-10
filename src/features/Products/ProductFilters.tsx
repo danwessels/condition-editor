@@ -18,15 +18,17 @@ const inputClass =
 
 export default function ProductFilters() {
   const [state, dispatch] = useContext(ProductContext);
-  const allProperties = window.datastore.getProperties();
 
   const selectedProperty = getSelectedProperty(
     state?.selectedProperty,
-    allProperties,
+    state.properties,
   );
 
-  const propertyOptions = getPropertiesOptions();
-  const operatorOptions = getOperatorOptions(selectedProperty?.type);
+  const propertyOptions = getPropertiesOptions(state.properties);
+  const operatorOptions = getOperatorOptions(
+    state.operators,
+    selectedProperty?.type,
+  );
   const valueOptions = getValueOptions(selectedProperty?.values);
 
   function onSelectProperty(selected: SingleValue<SelectOptionType>) {
