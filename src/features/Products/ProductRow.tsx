@@ -1,7 +1,6 @@
 import { type Product } from "../../types";
 
-const rowClass =
-  "border-t-1 border-slate-200 p-2 focus:outline-none focus:inset-ring-2 focus:inset-ring-blue-300";
+const rowClass = "border-t-1 border-slate-200 p-2";
 
 export default function ProductRow({ product }: { product: Product }) {
   const properties = window.datastore.getProperties();
@@ -23,7 +22,6 @@ export default function ProductRow({ product }: { product: Product }) {
             key={`product-${product.id}-property-${id}`}
             className={rowClass}
             role="cell"
-            tabIndex={0}
           >
             {propertyValue ?? <span className="text-slate-400 italic">—</span>}
           </div>

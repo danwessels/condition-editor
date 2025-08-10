@@ -1,15 +1,9 @@
 import { type Product, type Property } from "../types";
+import { type OperatorType } from "../features/Products/utils";
 
 interface Operator {
   text: string;
-  id:
-    | "equals"
-    | "greater_than"
-    | "less_than"
-    | "any"
-    | "none"
-    | "in"
-    | "contains";
+  id: OperatorType;
 }
 
 declare global {
