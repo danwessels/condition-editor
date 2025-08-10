@@ -5,6 +5,7 @@ import {
   type SelectOptionType,
   type PropertyType,
   type Property,
+  type Operator,
 } from "../../types";
 
 const OPERATOR_TYPES = {
@@ -25,7 +26,6 @@ export const checkMatchesOperatorCondition = (
   props: OperatorConditionParams,
 ) => {
   const { operator, productValue, comparisonValue } = props;
-
   switch (operator) {
     case OPERATOR_TYPES.EQUALS:
       if (comparisonValue === "") return true;
@@ -108,21 +108,19 @@ function buildOperatorParams(
 
     return {
       operator: OPERATOR_TYPES.ANY,
-      productValue: parsedProductValue as string | number,
+      productValue: productValue as string | number | undefined,
     };
   }
 }
 
 export function getFilteredProducts(state: State) {
-  const products = window?.datastore?.getProducts() || [];
-
   const { selectedProperty, selectedOperator, selectedValues, searchText } =
     state;
 
   if (selectedProperty?.value && selectedOperator?.value) {
     const propertyId = parseInt(selectedProperty?.value);
 
-    return products.filter((product) => {
+    return state.products.filter((product) => {
       // Find the property value for the selected property
       const productProperty = product.property_values.find(
         ({ property_id }) => property_id === propertyId,
@@ -138,7 +136,7 @@ export function getFilteredProducts(state: State) {
       return checkMatchesOperatorCondition(params);
     });
   } else {
-    return products;
+    return state.products;
   }
 }
 
@@ -168,9 +166,11 @@ const operatorsByPropertyType: Record<PropertyType, OperatorType[]> = {
   ],
 };
 
-export function getOperatorOptions(selectedPropertyType?: PropertyType) {
-  if (!selectedPropertyType) return [];
-  const operators = window.datastore.getOperators();
+export function getOperatorOptions(
+  operators: Operator[],
+  selectedPropertyType?: PropertyType,
+) {
+  if (!selectedPropertyType || operators?.length === 0) return [];
   const validOperators = operatorsByPropertyType[selectedPropertyType];
 
   return operators
@@ -191,9 +191,7 @@ export function getValueOptions(selectedPropertyValues?: string[] | null) {
   }));
 }
 
-export function getPropertiesOptions() {
-  const properties = window.datastore.getProperties();
-
+export function getPropertiesOptions(properties: Property[]) {
   return properties.map(({ id, name }) => ({
     value: id.toString(),
     label: name,

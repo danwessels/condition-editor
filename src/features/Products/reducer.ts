@@ -1,5 +1,10 @@
 import { type MultiValue, type SingleValue } from "react-select";
-import { type SelectOptionType } from "../../types";
+import {
+  type SelectOptionType,
+  type Property,
+  type Operator,
+  type Product,
+} from "../../types";
 
 import { type OperatorType } from "./utils";
 
@@ -13,6 +18,9 @@ export interface State {
   selectedOperator: SingleValue<OperatorOptionType>;
   selectedValues: MultiValue<SelectOptionType>;
   searchText: string;
+  properties: Property[];
+  operators: Operator[];
+  products: Product[];
 }
 
 interface UpdateAction {

@@ -12,7 +12,7 @@
     "noEmit": false,
     "declaration": false,
     "sourceMap": false,
-    "types": ["jest", "node"]
+    "types": ["jest", "@testing-library/jest-dom", "node"]
   },
   "include": ["src/**/*", "src/setupTests.ts"],
   "exclude": ["node_modules", "dist"]

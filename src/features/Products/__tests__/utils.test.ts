@@ -9,15 +9,28 @@ import {
 import type { State } from "../reducer";
 import type {
   OperatorConditionParams,
-  Property,
   Product,
+  Property,
+  Operator,
 } from "../../../types";
 
-// Get the global mock datastore from setupTests
+// Get global mock data from setupTests
 declare const mockDatastore: {
   getOperators: jest.Mock;
   getProperties: jest.Mock;
   getProducts: jest.Mock;
+};
+declare const mockOperators: Operator[];
+declare const mockProperties: Property[];
+
+const initialState: State = {
+  selectedProperty: null,
+  selectedOperator: null,
+  selectedValues: [],
+  searchText: "",
+  properties: [],
+  operators: [],
+  products: [],
 };
 
 describe("products utils", () => {
@@ -53,16 +66,10 @@ describe("products utils", () => {
       },
     ];
 
-    beforeEach(() => {
-      mockDatastore.getProducts.mockReturnValue(mockProducts);
-    });
-
     it("should return all products when no filters are applied", () => {
       const state: State = {
-        selectedProperty: null,
-        selectedOperator: null,
-        selectedValues: [],
-        searchText: "",
+        ...initialState,
+        products: mockProducts,
       };
 
       const result = getFilteredProducts(state);
@@ -71,10 +78,9 @@ describe("products utils", () => {
 
     it("should return all products when only property is selected", () => {
       const state: State = {
+        ...initialState,
+        products: mockProducts,
         selectedProperty: { value: "1", label: "Name" },
-        selectedOperator: null,
-        selectedValues: [],
-        searchText: "",
       };
 
       const result = getFilteredProducts(state);
@@ -83,9 +89,10 @@ describe("products utils", () => {
 
     it("should filter products using equals operator", () => {
       const state: State = {
+        ...initialState,
+        products: mockProducts,
         selectedProperty: { value: "2", label: "Color" },
         selectedOperator: { value: "equals", label: "Equals" },
-        selectedValues: [],
         searchText: "black",
       };
 
@@ -96,9 +103,10 @@ describe("products utils", () => {
 
     it("should filter products using contains operator", () => {
       const state: State = {
+        ...initialState,
+        products: mockProducts,
         selectedProperty: { value: "1", label: "Name" },
         selectedOperator: { value: "contains", label: "Contains" },
-        selectedValues: [],
         searchText: "head",
       };
 
@@ -109,9 +117,10 @@ describe("products utils", () => {
 
     it("should filter products using greater_than operator", () => {
       const state: State = {
+        ...initialState,
+        products: mockProducts,
         selectedProperty: { value: "3", label: "Rating" },
         selectedOperator: { value: "greater_than", label: "Greater Than" },
-        selectedValues: [],
         searchText: "3",
       };
 
@@ -122,9 +131,10 @@ describe("products utils", () => {
 
     it("should filter products using less_than operator", () => {
       const state: State = {
+        ...initialState,
+        products: mockProducts,
         selectedProperty: { value: "3", label: "Rating" },
         selectedOperator: { value: "less_than", label: "Less Than" },
-        selectedValues: [],
         searchText: "4",
       };
 
@@ -135,6 +145,8 @@ describe("products utils", () => {
 
     it("should filter products using in operator", () => {
       const state: State = {
+        ...initialState,
+        products: mockProducts,
         selectedProperty: { value: "2", label: "Color" },
         selectedOperator: { value: "in", label: "In" },
         selectedValues: [
@@ -150,10 +162,10 @@ describe("products utils", () => {
 
     it("should filter products using any operator", () => {
       const state: State = {
+        ...initialState,
+        products: mockProducts,
         selectedProperty: { value: "1", label: "Name" },
         selectedOperator: { value: "any", label: "Any" },
-        selectedValues: [],
-        searchText: "",
       };
 
       const result = getFilteredProducts(state);
@@ -172,13 +184,11 @@ describe("products utils", () => {
         },
       ];
 
-      mockDatastore.getProducts.mockReturnValue(productsWithMissing);
-
       const state: State = {
+        ...initialState,
+        products: productsWithMissing,
         selectedProperty: { value: "2", label: "Color" },
         selectedOperator: { value: "none", label: "None" },
-        selectedValues: [],
-        searchText: "",
       };
 
       const result = getFilteredProducts(state);
@@ -186,36 +196,25 @@ describe("products utils", () => {
       expect(result[0].id).toBe(4);
     });
 
-    it("should return empty array when datastore is not available", () => {
-      // Temporarily set window.datastore to undefined to test the fallback
-      const originalDatastore = window.datastore;
-      Object.defineProperty(window, "datastore", {
-        value: undefined,
-        writable: true,
-      });
-
+    it("should return empty array when no products in state", () => {
       const state: State = {
+        ...initialState,
+        products: [], // Empty products array
         selectedProperty: { value: "1", label: "Name" },
         selectedOperator: { value: "equals", label: "Equals" },
-        selectedValues: [],
         searchText: "test",
       };
 
       const result = getFilteredProducts(state);
       expect(result).toEqual([]);
-
-      // Restore original datastore
-      Object.defineProperty(window, "datastore", {
-        value: originalDatastore,
-        writable: true,
-      });
     });
 
     it("should handle case-insensitive string filtering", () => {
       const state: State = {
+        ...initialState,
+        products: mockProducts,
         selectedProperty: { value: "1", label: "Name" },
         selectedOperator: { value: "equals", label: "Equals" },
-        selectedValues: [],
         searchText: "HEADPHONES",
       };
 
@@ -401,19 +400,11 @@ describe("products utils", () => {
 
   describe("getOperatorOptions", () => {
     beforeEach(() => {
-      mockDatastore.getOperators.mockReturnValue([
-        { id: "equals", text: "Equals" },
-        { id: "contains", text: "Contains" },
-        { id: "greater_than", text: "Greater Than" },
-        { id: "less_than", text: "Less Than" },
-        { id: "any", text: "Any" },
-        { id: "none", text: "None" },
-        { id: "in", text: "In" },
-      ]);
+      mockDatastore.getOperators.mockReturnValue(mockOperators);
     });
 
     it("should return correct operators for string property type", () => {
-      const result = getOperatorOptions("string");
+      const result = getOperatorOptions(mockOperators, "string");
       const expectedOperators = ["equals", "any", "none", "in", "contains"];
 
       expect(result).toHaveLength(5);
@@ -423,7 +414,7 @@ describe("products utils", () => {
     });
 
     it("should return correct operators for number property type", () => {
-      const result = getOperatorOptions("number");
+      const result = getOperatorOptions(mockOperators, "number");
       const expectedOperators = [
         "equals",
         "greater_than",
@@ -440,7 +431,7 @@ describe("products utils", () => {
     });
 
     it("should return correct operators for enumerated property type", () => {
-      const result = getOperatorOptions("enumerated");
+      const result = getOperatorOptions(mockOperators, "enumerated");
       const expectedOperators = ["equals", "any", "none", "in"];
 
       expect(result).toHaveLength(4);
@@ -450,7 +441,7 @@ describe("products utils", () => {
     });
 
     it("should return empty array when no property type is provided", () => {
-      const result = getOperatorOptions();
+      const result = getOperatorOptions(mockOperators, undefined);
       expect(result).toEqual([]);
     });
   });
@@ -476,27 +467,16 @@ describe("products utils", () => {
 
   describe("getPropertiesOptions", () => {
     it("should return formatted property options", () => {
-      const mockProperties = [
-        { id: 1, name: "color", type: "string" },
-        { id: 2, name: "size", type: "number" },
-      ];
-
-      mockDatastore.getProperties.mockReturnValue(mockProperties);
-
-      const result = getPropertiesOptions();
+      const result = getPropertiesOptions(mockProperties);
       expect(result).toEqual([
         { value: "1", label: "color" },
         { value: "2", label: "size" },
+        { value: "3", label: "price" },
       ]);
     });
   });
 
   describe("getSelectedProperty", () => {
-    const mockProperties: Property[] = [
-      { id: 1, name: "color", type: "string" },
-      { id: 2, name: "size", type: "number" },
-    ];
-
     it("should return the correct property when found", () => {
       const selectedProperty = { value: "1", label: "color" };
       const result = getSelectedProperty(selectedProperty, mockProperties);

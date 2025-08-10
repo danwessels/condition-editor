@@ -12,9 +12,10 @@ const initialState = {
   selectedOperator: null,
   selectedValues: [],
   searchText: "",
+  properties: window?.datastore?.getProperties() || [],
+  operators: window?.datastore?.getOperators() || [],
+  products: window?.datastore?.getProducts() || [],
 };
-
-const properties = window.datastore.getProperties();
 
 const headerRowClass = "font-semibold p-2 bg-slate-100";
 
@@ -26,17 +27,18 @@ export default function Products() {
   return (
     <div>
       <ProductContext value={[state, dispatch]}>
+        <h1 className="mb-5">Products</h1>
         <ProductFilters />
         <div
-          className="grid border-1 border-slate-300 rounded-sm mt-4 overflow-x-auto"
+          className="grid border-1 border-slate-300 rounded-sm  overflow-x-auto"
           style={{
-            gridTemplateColumns: `repeat(${properties.length}, minmax(100px, 1fr))`,
+            gridTemplateColumns: `repeat(${state.properties.length}, minmax(100px, 1fr))`,
           }}
           role="table"
           aria-label="Product data table"
         >
           {/* column headings */}
-          {properties.map(({ id, name }) => {
+          {state.properties.map(({ id, name }) => {
             return (
               <div
                 key={`property-${id}`}
@@ -48,9 +50,15 @@ export default function Products() {
             );
           })}
           {/* product rows */}
-          {filteredProducts.map((product) => (
-            <ProductRow key={product.id} product={product} />
-          ))}
+          {filteredProducts?.length > 0 &&
+            filteredProducts.map((product) => (
+              <ProductRow key={product.id} product={product} />
+            ))}
+          {filteredProducts?.length === 0 && (
+            <div className="col-span-full p-4 text-center text-slate-500">
+              No products match the current filters.
+            </div>
+          )}
         </div>
       </ProductContext>
     </div>
