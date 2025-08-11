@@ -53,8 +53,6 @@ The application uses a mock datastore to simulate product data with properties a
 2. **Choose an Operator**: Pick an appropriate comparison operator based on property type
 3. **Set Values**: Enter or select values to see filtered results in real-time
 
-### Technical Approach
-
 ## Project Structure
 
 ```
@@ -73,6 +71,8 @@ src/
 ├── types/              # TypeScript type definitions
 └── styles.css         # Global styles
 ```
+
+## Technical Approach
 
 **Architecture Decisions:**
 - **React Context + Reducer Pattern**: Chose this over external state management (Redux/Zustand) for simplicity. The reducer pattern provides predictable state updates and is easy to test.
