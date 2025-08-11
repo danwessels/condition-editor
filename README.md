@@ -22,7 +22,7 @@ A React application for filtering and displaying products with dynamic condition
 ### Prerequisites
 
 - Node.js 20.19+ or 22.12+
-- npm (this guide provides npm commands, but you can use Yarn equivalents)
+- npm
 
 ### Installation
 
