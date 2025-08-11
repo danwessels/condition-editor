@@ -1,69 +1,77 @@
-# React + TypeScript + Vite
+# Condition Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React application for filtering and displaying products with dynamic condition-based queries. Users can filter products by selecting properties, operators, and values.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Dynamic Product Filtering**: Filter products using customisable conditions
+- **Flexible Operators**: Support for various comparison operators (equals, contains, greater than, etc.)
+- **Responsive Design**: Clean, responsive UI built with Tailwind CSS
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **React 19** with hooks and Context API for state management
+- **TypeScript** for type safety and better developer experience
+- **Vite** for fast development and building
+- **Tailwind CSS** for styling
+- **React Select** for enhanced dropdown components
+- **Jest** and React Testing Library for testing
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Prerequisites
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js 20.19+ or 22.12+
+- npm (this guide provides npm commands, but you can use Yarn equivalents)
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd salsify-condition-editor
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Install dependencies:
+```bash
+npm install
 ```
+
+3. Start the development server:
+```bash
+npm run dev
+```
+
+4. Open your browser and navigate to `http://localhost:5173`
+
+## Useful Scripts
+
+- `npm run dev` - Start the development server
+- `npm run test` - Run the test suite
+
+## Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   ├── Button.tsx
+│   ├── Select.tsx
+│   └── __tests__/
+├── features/
+│   └── Products/        # Main product filtering feature
+│       ├── context.ts   # React Context for state management
+│       ├── reducer.ts   # State reducer logic
+│       ├── utils.ts     # Utility functions
+│       └── components/  # Feature-specific components
+├── mockApi/            # Mock data 
+├── types/              # TypeScript type definitions
+└── styles.css         # Global styles
+```
+
+## How It Works
+
+The application uses a mock datastore to simulate product data with properties and filtering capabilities. Users can:
+
+1. **Select a Property**: Choose from available product properties
+2. **Choose an Operator**: Pick an appropriate comparison operator based on property type
+3. **Set Values**: Enter or select values to see filtered results in real-time
