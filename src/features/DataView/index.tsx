@@ -20,12 +20,15 @@ const initialState = {
 };
 
 const headerRowClass = "font-semibold p-2 bg-slate-100";
+const pageLength = 10;
 
 export default function Products() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [view, setView] = useState<"table" | "orbit">("table");
+  const [page, setPage] = useState(1);
 
   const filteredProducts = getFilteredProducts(state);
+  const pageCount = Math.ceil(filteredProducts.length / pageLength);
 
   return (
     <div>
@@ -59,9 +62,11 @@ export default function Products() {
             })}
             {/* product rows */}
             {filteredProducts?.length > 0 &&
-              filteredProducts.map((product) => (
-                <ProductRow key={product.id} product={product} />
-              ))}
+              filteredProducts
+                .slice((page - 1) * pageLength, page * pageLength)
+                .map((product) => (
+                  <ProductRow key={product.id} product={product} />
+                ))}
             {filteredProducts?.length === 0 && (
               <div className="col-span-full p-4 text-center text-slate-500">
                 No products match the current filters.
@@ -69,6 +74,24 @@ export default function Products() {
             )}
           </div>
         )}
+        {
+          /* Pagination controls */ view === "table" &&
+            filteredProducts?.length > 0 && (
+              <div className="flex justify-between items-center mt-4">
+                <Button
+                  onClick={() => setPage((prev) => prev - 1)}
+                  label="Prev"
+                  disabled={page === 1}
+                />
+                <p>{`Page ${page} of ${pageCount}`}</p>
+                <Button
+                  onClick={() => setPage((prev) => prev + 1)}
+                  label="Next"
+                  disabled={page === pageCount}
+                />
+              </div>
+            )
+        }
         {view === "orbit" && (
           <div>
             <OrbitVisualization comets={filteredProducts} />

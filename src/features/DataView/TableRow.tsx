@@ -2,7 +2,8 @@ import { type Product } from "../../types";
 import { ProductContext } from "./context";
 import { useContext } from "react";
 
-const rowClass = "border-t-1 border-slate-200 p-2";
+const rowClass =
+  "border-t-1 border-slate-200 p-2 text-ellipsis overflow-hidden hover:bg-slate-50";
 
 export default function ProductRow({ product }: { product: Product }) {
   const [state] = useContext(ProductContext);
