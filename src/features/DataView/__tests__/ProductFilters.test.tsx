@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ProductContext } from "../context";
-import ProductFilters from "../ProductFilters";
+import ProductFilters from "../DataFilters";
 import type { State } from "../reducer";
 import type { Property, Operator } from "../../../types";
 

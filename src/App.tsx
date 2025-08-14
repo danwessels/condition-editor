@@ -1,9 +1,9 @@
-import Products from "./features/Products";
+import DataView from "./features/DataView";
 
 function App() {
   return (
     <div className="m-auto p-8 md:p-12 w-full">
-      <Products />
+      <DataView />
     </div>
   );
 }

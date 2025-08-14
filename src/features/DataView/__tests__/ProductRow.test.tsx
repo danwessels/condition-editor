@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import type { Product } from "../../../types";
 import type { State } from "../reducer";
 import { ProductContext } from "../context";
-import ProductRow from "../ProductRow";
+import ProductRow from "../TableRow";
 import type { Property } from "../../../types";
 
 // Get global mock data from setupTests

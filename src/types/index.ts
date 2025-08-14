@@ -1,4 +1,4 @@
-import { type OperatorType } from "../features/Products/utils";
+import { type OperatorType } from "../features/DataView/utils";
 
 interface PropertyProduct {
   property_id: number;

@@ -74,7 +74,7 @@ function buildOperatorParams(
 
   if (operator === OPERATOR_TYPES.IN) {
     const comparisonValue = selectedValues.map(({ value }) => {
-      return isNumber ? parseInt(value) : value;
+      return isNumber ? parseInt(value) : value.toLowerCase();
     });
 
     return {

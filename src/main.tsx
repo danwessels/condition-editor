@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./mockApi/datastore";
+import "./data/cometDatastore.ts";
 import "./styles.css";
 import App from "./App.tsx";
 
