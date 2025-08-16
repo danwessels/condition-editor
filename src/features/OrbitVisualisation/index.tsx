@@ -10,7 +10,7 @@ const scaleWidthOffset = 1.16; // Adjust this to change the center X position
 
 interface OrbitVisualizationProps {
   comets: Product[];
-  selectedComet?: Product | null; // NB!!!!!!!!!!!!!!!!!!!!! clicking selected comet does nothing
+  selectedComet?: Product | null;
   onCometSelect?: (comet: Product | null) => void;
 }
 

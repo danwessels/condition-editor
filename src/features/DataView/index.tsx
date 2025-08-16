@@ -17,6 +17,7 @@ const initialState = {
   properties: window?.datastore?.getProperties() || [],
   operators: window?.datastore?.getOperators() || [],
   products: window?.datastore?.getProducts() || [],
+  page: 1,
 };
 
 const headerRowClass = "font-medium p-2 bg-zinc-800 text-zinc-300";
@@ -50,13 +51,24 @@ function insertToggleButton(view: "table" | "orbit", toggleView: () => void) {
 export default function Products() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [view, setView] = useState<"table" | "orbit">("table");
-  const [page, setPage] = useState(1);
 
   const filteredProducts = getFilteredProducts(state);
   const pageCount = Math.ceil(filteredProducts.length / pageLength);
 
   function toggleView() {
     setView((prev) => (prev === "table" ? "orbit" : "table"));
+  }
+
+  function nextPage() {
+    if (state.page < pageCount) {
+      dispatch({ type: "set_page", value: state.page + 1 });
+    }
+  }
+
+  function prevPage() {
+    if (state.page > 1) {
+      dispatch({ type: "set_page", value: state.page - 1 });
+    }
   }
 
   if (!state.products || state.products.length === 0) {
@@ -106,7 +118,7 @@ export default function Products() {
             {/* product rows */}
             {filteredProducts?.length > 0 &&
               filteredProducts
-                .slice((page - 1) * pageLength, page * pageLength)
+                .slice((state.page - 1) * pageLength, state.page * pageLength)
                 .map((product) => (
                   <ProductRow key={product.id} product={product} />
                 ))}
@@ -122,15 +134,15 @@ export default function Products() {
             filteredProducts?.length > 0 && (
               <div className="flex justify-between items-center mt-4">
                 <Button
-                  onClick={() => setPage((prev) => prev - 1)}
+                  onClick={prevPage}
                   label="Prev"
-                  disabled={page === 1}
+                  disabled={state.page === 1}
                 />
-                <p>{`Page ${page} of ${pageCount}`}</p>
+                <p className="text-zinc-400">{`Page ${state.page} of ${pageCount}`}</p>
                 <Button
-                  onClick={() => setPage((prev) => prev + 1)}
+                  onClick={nextPage}
                   label="Next"
-                  disabled={page === pageCount}
+                  disabled={state.page === pageCount}
                 />
               </div>
             )
