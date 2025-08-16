@@ -96,7 +96,7 @@ export default function Products() {
         </div>
         {view === "table" && (
           <div
-            className="grid border-2 border-zinc-900 rounded-lg text-zinc-400 overflow-x-auto"
+            className="grid border-1 border-zinc-700 rounded-lg text-zinc-400 overflow-x-auto"
             style={{
               gridTemplateColumns: `repeat(${state.properties.length}, minmax(100px, 1fr))`,
             }}
@@ -138,7 +138,7 @@ export default function Products() {
                   label="Prev"
                   disabled={state.page === 1}
                 />
-                <p className="text-zinc-400">{`Page ${state.page} of ${pageCount}`}</p>
+                <p className="text-zinc-300">{`Page ${state.page} of ${pageCount}`}</p>
                 <Button
                   onClick={nextPage}
                   label="Next"
