@@ -21,6 +21,7 @@ export interface State {
   properties: Property[];
   operators: Operator[];
   products: Product[];
+  page: number;
 }
 
 interface UpdateAction {
@@ -47,12 +48,18 @@ interface ClearAllAction {
   type: "clear_all";
 }
 
+interface SetPageAction {
+  type: "set_page";
+  value: number;
+}
+
 export type Action =
   | UpdateAction
   | UpdateOperatorAction
   | UpdateValueAction
   | UpdateSearchAction
-  | ClearAllAction;
+  | ClearAllAction
+  | SetPageAction;
 
 export default function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -63,6 +70,7 @@ export default function reducer(state: State, action: Action): State {
         selectedOperator: null,
         selectedValues: [],
         searchText: "",
+        page: 1, // Reset to first page when property changes
       };
     }
     case "update_operator": {
@@ -71,18 +79,21 @@ export default function reducer(state: State, action: Action): State {
         selectedOperator: action.value,
         selectedValues: [],
         searchText: "",
+        page: 1,
       };
     }
     case "update_values": {
       return {
         ...state,
         selectedValues: action.value,
+        page: 1,
       };
     }
     case "update_search_text": {
       return {
         ...state,
         searchText: action.value,
+        page: 1,
       };
     }
     case "clear_all": {
@@ -92,6 +103,13 @@ export default function reducer(state: State, action: Action): State {
         selectedOperator: null,
         selectedValues: [],
         searchText: "",
+        page: 1,
+      };
+    }
+    case "set_page": {
+      return {
+        ...state,
+        page: action.value,
       };
     }
     default:

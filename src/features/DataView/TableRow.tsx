@@ -2,7 +2,8 @@ import { type Product } from "../../types";
 import { ProductContext } from "./context";
 import { useContext } from "react";
 
-const rowClass = "border-t-1 border-slate-200 p-2";
+const rowClass =
+  "border-t-2 border-zinc-800 bg-zinc-900 p-2 text-ellipsis overflow-hidden hover:bg-zinc-200";
 
 export default function ProductRow({ product }: { product: Product }) {
   const [state] = useContext(ProductContext);
@@ -25,7 +26,7 @@ export default function ProductRow({ product }: { product: Product }) {
             className={rowClass}
             role="cell"
           >
-            {propertyValue ?? <span className="text-slate-400">—</span>}
+            {propertyValue ?? <span className="text-zinc-400">&mdash;</span>}
           </div>
         );
       })}
