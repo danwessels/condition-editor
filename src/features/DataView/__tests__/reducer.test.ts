@@ -17,6 +17,7 @@ describe("products state reducer", () => {
     properties: mockProperties,
     operators: mockOperators,
     products: mockProducts,
+    page: 1,
   };
 
   describe("update_property action", () => {

@@ -18,6 +18,7 @@ describe("ProductFilters Component", () => {
     properties: mockProperties,
     operators: mockOperators,
     products: [],
+    page: 1,
   };
 
   const mockDispatch = jest.fn();

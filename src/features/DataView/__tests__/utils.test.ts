@@ -31,6 +31,7 @@ const initialState: State = {
   properties: [],
   operators: [],
   products: [],
+  page: 1,
 };
 
 describe("products utils", () => {
