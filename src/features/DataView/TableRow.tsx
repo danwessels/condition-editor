@@ -3,7 +3,7 @@ import { ProductContext } from "./context";
 import { useContext } from "react";
 
 const rowClass =
-  "border-t-2 border-zinc-800 bg-zinc-900 p-2 text-ellipsis overflow-hidden hover:bg-zinc-200";
+  "border-t-2 border-zinc-800 bg-zinc-900 p-2 text-ellipsis overflow-hidden hover:bg-zinc-400 hover:text-zinc-800";
 
 export default function ProductRow({ product }: { product: Product }) {
   const [state] = useContext(ProductContext);
