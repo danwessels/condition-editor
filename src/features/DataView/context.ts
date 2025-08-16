@@ -10,6 +10,7 @@ const initialState: State = {
   properties: [],
   operators: [],
   products: [],
+  page: 1,
 };
 
 // Create context with default empty values

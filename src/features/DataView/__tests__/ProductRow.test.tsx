@@ -26,6 +26,7 @@ describe("ProductRow Component", () => {
     properties: mockProperties,
     operators: [],
     products: [],
+    page: 1,
   };
 
   const mockDispatch = jest.fn();

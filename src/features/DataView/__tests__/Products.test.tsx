@@ -20,7 +20,7 @@ describe("Products Component", () => {
 
     // Check if the table role is present
     expect(
-      screen.getByRole("table", { name: "Product data table" }),
+      screen.getByRole("table", { name: "Near earth comets data table" }),
     ).toBeInTheDocument();
 
     // Component should render column headers for our mock properties
