@@ -146,7 +146,7 @@ export default function Products() {
                   label="Prev"
                   disabled={state.page === 1}
                 />
-                <p className="text-zinc-300">{`Page ${state.page} of ${pageCount}`}</p>
+                <p className="text-zinc-400 text-sm">{`Page ${state.page} of ${pageCount}`}</p>
                 <Button
                   onClick={nextPage}
                   label="Next"
