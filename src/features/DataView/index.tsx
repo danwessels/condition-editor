@@ -85,7 +85,7 @@ export default function Products() {
           Discover comets that have orbits near Earth. The data presented here
           is from the{" "}
           <a
-            className="text-blue-400 font-medium hover:underline"
+            className="text-blue-400 font-medium hover:border-b-2 transition-all duration-200"
             target="_blank"
             href="https://data.nasa.gov/dataset/near-earth-comets-orbital-elements"
           >

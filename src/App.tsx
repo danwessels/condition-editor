@@ -14,7 +14,6 @@ function App() {
           >
             Dan 🐾
           </a>
-          {/* <span className="text-zinc-400 "> &copy; 2025</span> */}
         </p>
       </footer>
     </div>
