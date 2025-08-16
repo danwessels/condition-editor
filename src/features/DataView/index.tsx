@@ -81,9 +81,17 @@ export default function Products() {
         <h1 className="mb-2 text-orange-400 font-semibold font-mono">
           Near Earth Comets
         </h1>
-        <p className="mb-5 text-zinc-300 font-light">
-          Discover objects in space that have orbits near Earth. Use the filters
-          below to refine your search.
+        <p className="mb-5 text-zinc-300 font-light max-w-prose">
+          Discover comets that have orbits near Earth. The data presented here
+          is from the{" "}
+          <a
+            className="text-blue-400 font-medium hover:underline"
+            target="_blank"
+            href="https://data.nasa.gov/dataset/near-earth-comets-orbital-elements"
+          >
+            NASA Open Data Portal
+          </a>
+          . Use the filters below to refine your search.
         </p>
         <ProductFilters />
         <div className="flex justify-between items-end mb-4 mt-10">
@@ -96,7 +104,7 @@ export default function Products() {
         </div>
         {view === "table" && (
           <div
-            className="grid border-1 border-zinc-700 rounded-lg text-zinc-400 overflow-x-auto"
+            className="grid border-1 border-zinc-700 rounded-lg text-zinc-400 overflow-x-auto text-sm"
             style={{
               gridTemplateColumns: `repeat(${state.properties.length}, minmax(100px, 1fr))`,
             }}

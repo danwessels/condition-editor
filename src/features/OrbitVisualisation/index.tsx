@@ -338,7 +338,7 @@ export default function OrbitVisualization({
         />
       </div>
 
-      <div className="mt-2 text-sm text-zinc-500">
+      {/* <div className="mt-2 text-sm text-zinc-500">
         <p>
           Interactive orbital view showing {comets.length} comets. Click on
           perihelion points (coloured dots) to select comets. Zoom to see
@@ -349,7 +349,7 @@ export default function OrbitVisualization({
             Selected: {getPropertyValue(selectedComet, 0)}
           </p>
         )}
-      </div>
+      </div> */}
     </div>
   );
 }
