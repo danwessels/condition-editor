@@ -1,9 +1,16 @@
 import React, { useRef, useEffect, useState } from "react";
 import { type Product } from "../../types";
 
+const green = "#bef264";
+const blue = "#60a5fa";
+const red = "#ea580c";
+const yellow = "#facc15";
+
+const scaleWidthOffset = 1.16; // Adjust this to change the center X position
+
 interface OrbitVisualizationProps {
   comets: Product[];
-  selectedComet?: Product | null;
+  selectedComet?: Product | null; // NB!!!!!!!!!!!!!!!!!!!!! clicking selected comet does nothing
   onCometSelect?: (comet: Product | null) => void;
 }
 
@@ -52,12 +59,12 @@ export default function OrbitVisualization({
       // Color coding based on period type or eccentricity
       let color: string;
       if (eccentricity < 0.3)
-        color = "#4CAF50"; // Green for nearly circular
+        color = yellow; // Yellow for nearly circular
       else if (eccentricity < 0.7)
-        color = "#2196F3"; // Blue for elliptical
+        color = red; // Red for elliptical
       else if (eccentricity < 0.9)
-        color = "#FF9800"; // Orange for highly elliptical
-      else color = "#F44336"; // Red for nearly parabolic
+        color = blue; // Blue for highly elliptical
+      else color = green; // Green for nearly parabolic
 
       return {
         comet,
@@ -83,7 +90,7 @@ export default function OrbitVisualization({
 
     const width = canvas.width;
     const height = canvas.height;
-    const centerX = width / 2;
+    const centerX = width / scaleWidthOffset; // Adjusted center X position
     const centerY = height / 2;
 
     // Clear canvas
@@ -94,8 +101,7 @@ export default function OrbitVisualization({
 
     // Find max distance for scaling
     const maxDistance = Math.max(...orbitData.map((d) => d.aphelion));
-    const scaleFactor =
-      (Math.min(width, height) * 0.4) / ((maxDistance * scale) / 10);
+    const scaleFactor = (Math.min(width, height) * 0.4 * scale) / maxDistance;
 
     // Draw Sun
     ctx.fillStyle = "#FFD700";
@@ -156,11 +162,8 @@ export default function OrbitVisualization({
       ctx.stroke();
       ctx.restore();
 
-      // Draw perihelion point
-      const perihelionX =
-        centerX -
-        focusOffset +
-        (semiMajorAxis - orbit.perihelion) * scaleFactor;
+      // Draw perihelion point (rightmost point of the ellipse, closest to Sun)
+      const perihelionX = centerX - focusOffset + semiMajorAxis * scaleFactor;
       const perihelionY = centerY;
 
       ctx.fillStyle = color;
@@ -207,21 +210,21 @@ export default function OrbitVisualization({
     height: number,
   ) => {
     const legendX = 10;
-    const legendY = height - 120;
+    const legendY = height - 100;
 
     // Legend background
     ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
     ctx.fillRect(legendX - 5, legendY - 5, 200, 110);
 
-    ctx.font = "11px Arial";
+    ctx.font = "12px Sans-serif";
     ctx.fillStyle = "#FFFFFF";
     ctx.fillText("Orbit Shape by Eccentricity:", legendX, legendY + 10);
 
     const legendItems = [
-      { color: "#4CAF50", label: "Nearly Circular (e < 0.3)" },
-      { color: "#2196F3", label: "Elliptical (e < 0.7)" },
-      { color: "#FF9800", label: "Highly Elliptical (e < 0.9)" },
-      { color: "#F44336", label: "Nearly Parabolic (e ≥ 0.9)" },
+      { color: green, label: "Nearly Circular (e < 0.3)" },
+      { color: blue, label: "Elliptical (e < 0.7)" },
+      { color: red, label: "Highly Elliptical (e < 0.9)" },
+      { color: yellow, label: "Nearly Parabolic (e ≥ 0.9)" },
     ];
 
     legendItems.forEach((item, index) => {
@@ -229,7 +232,7 @@ export default function OrbitVisualization({
       ctx.fillStyle = item.color;
       ctx.fillRect(legendX, y, 12, 12);
       ctx.fillStyle = "#FFFFFF";
-      ctx.font = "10px Arial";
+      ctx.font = "11px Arial";
       ctx.fillText(item.label, legendX + 18, y + 9);
     });
   };
@@ -243,14 +246,13 @@ export default function OrbitVisualization({
     const mouseX = event.clientX - rect.left;
     const mouseY = event.clientY - rect.top;
 
-    const centerX = canvas.width / 2;
+    const centerX = canvas.width / scaleWidthOffset; // Adjusted center X position
     const centerY = canvas.height / 2;
 
     const orbitData = processComets();
     const maxDistance = Math.max(...orbitData.map((d) => d.aphelion));
     const scaleFactor =
-      (Math.min(canvas.width, canvas.height) * 0.4) /
-      ((maxDistance * scale) / 10);
+      (Math.min(canvas.width, canvas.height) * 0.4 * scale) / maxDistance;
 
     // Check if mouse is near any comet's perihelion point
     let nearestComet: Product | null = null;
@@ -260,9 +262,7 @@ export default function OrbitVisualization({
       const focusOffset =
         orbit.semiMajorAxis * orbit.eccentricity * scaleFactor;
       const perihelionX =
-        centerX -
-        focusOffset +
-        (orbit.semiMajorAxis - orbit.perihelion) * scaleFactor;
+        centerX - focusOffset + orbit.semiMajorAxis * scaleFactor;
       const perihelionY = centerY;
 
       const distance = Math.sqrt(
@@ -279,6 +279,7 @@ export default function OrbitVisualization({
   };
 
   const handleClick = () => {
+    console.log("handleClick", hoveredComet, selectedComet);
     if (hoveredComet && onCometSelect) {
       onCometSelect(
         selectedComet?.id === hoveredComet.id ? null : hoveredComet,
@@ -287,12 +288,12 @@ export default function OrbitVisualization({
   };
 
   // Zoom controls
-  const handleZoomIn = () => setScale(Math.max(1, scale - 2));
-  const handleZoomOut = () => setScale(Math.min(20, scale + 2));
+  const handleZoomIn = () => setScale(Math.min(50, scale + 2));
+  const handleZoomOut = () => setScale(Math.max(0.5, scale - 2));
 
   useEffect(() => {
     drawOrbits();
-  }, [comets, selectedComet, hoveredComet, scale]);
+  }, [comets, selectedComet, hoveredComet, scale, drawOrbits]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -314,25 +315,21 @@ export default function OrbitVisualization({
 
   return (
     <div className="relative w-full">
-      <div className="mb-4 flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Comet Orbits Visualization</h3>
-        <div className="flex gap-2">
-          <button
-            onClick={handleZoomIn}
-            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Zoom In
-          </button>
+      <div className="border border-zinc-600 rounded relative">
+        <div className="flex gap-2 absolute top-2 right-2">
           <button
             onClick={handleZoomOut}
-            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="px-3 py-1 bg-zinc-600 text-white text-xl rounded hover:bg-zinc-500"
           >
-            Zoom Out
+            &#8722; {/* Minus sign for zoom out */}
+          </button>
+          <button
+            onClick={handleZoomIn}
+            className="px-3 py-1 bg-zinc-600 text-white text-xl rounded hover:bg-zinc-500"
+          >
+            &#43; {/* Plus sign for zoom in */}
           </button>
         </div>
-      </div>
-
-      <div className="border border-gray-300 rounded">
         <canvas
           ref={canvasRef}
           onMouseMove={handleMouseMove}
@@ -341,14 +338,14 @@ export default function OrbitVisualization({
         />
       </div>
 
-      <div className="mt-2 text-sm text-gray-600">
+      <div className="mt-2 text-sm text-zinc-500">
         <p>
           Interactive orbital view showing {comets.length} comets. Click on
-          perihelion points (colored dots) to select comets. Zoom to see details
-          of inner vs outer solar system orbits.
+          perihelion points (coloured dots) to select comets. Zoom to see
+          details of inner vs outer solar system orbits.
         </p>
         {selectedComet && (
-          <p className="mt-1 font-semibold">
+          <p className="mt-1 font-semibold bg-red-500 w-24 h-24">
             Selected: {getPropertyValue(selectedComet, 0)}
           </p>
         )}

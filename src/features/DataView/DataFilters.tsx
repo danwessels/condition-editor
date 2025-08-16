@@ -14,7 +14,7 @@ import {
 
 const fieldContainerClass = "w-full sm:w-1/2 md:w-1/3 h-auto pr-3 mb-3";
 const inputClass =
-  "w-full min-h-10 h-full border border-slate-300 rounded-sm px-2";
+  "w-full h-full border border-zinc-600 rounded-md px-3 py-2 bg-zinc-800 text-zinc-100 placeholder-zinc-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none hover:border-zinc-500 transition-colors";
 
 export default function ProductFilters() {
   const [state, dispatch] = useContext(ProductContext);
@@ -76,7 +76,7 @@ export default function ProductFilters() {
   );
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between w-full items-start sm:gap-4 h-14">
+    <div className="flex flex-col sm:flex-row justify-between w-full items-start sm:gap-4 border-orange-400 border-b-1 b-2">
       <div className="flex flex-wrap max-w-[50rem] w-full">
         <div className={fieldContainerClass}>
           <Select

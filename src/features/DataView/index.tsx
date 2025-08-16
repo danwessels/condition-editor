@@ -19,8 +19,33 @@ const initialState = {
   products: window?.datastore?.getProducts() || [],
 };
 
-const headerRowClass = "font-semibold p-2 bg-slate-100";
+const headerRowClass = "font-medium p-2 bg-zinc-800 text-zinc-300";
 const pageLength = 10;
+
+function insertToggleButton(view: "table" | "orbit", toggleView: () => void) {
+  return (
+    <div className="flex items-center gap-3">
+      <span
+        className={`text-sm font-medium ${view === "table" ? "text-blue-400" : "text-zinc-400"} transition-colors duration-200`}
+      >
+        Table
+      </span>
+      <div
+        onClick={toggleView}
+        className="relative w-16 h-8 bg-zinc-700 rounded-full cursor-pointer transition-colors duration-200 hover:bg-zinc-600"
+      >
+        <div
+          className={`w-6 h-6 bg-blue-400 absolute transition-all duration-300 ease-in-out top-1 ${view === "table" ? "left-1" : "left-9"} rounded-full shadow-md`}
+        />
+      </div>
+      <span
+        className={`text-sm font-medium ${view === "orbit" ? "text-blue-400" : "text-zinc-400"} transition-colors duration-200`}
+      >
+        Orbit
+      </span>
+    </div>
+  );
+}
 
 export default function Products() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -30,23 +55,41 @@ export default function Products() {
   const filteredProducts = getFilteredProducts(state);
   const pageCount = Math.ceil(filteredProducts.length / pageLength);
 
+  function toggleView() {
+    setView((prev) => (prev === "table" ? "orbit" : "table"));
+  }
+
+  if (!state.products || state.products.length === 0) {
+    return <div className="p-4 text-center text-slate-500">Loading...</div>;
+  }
+
   return (
     <div>
       <ProductContext value={[state, dispatch]}>
-        <h1 className="mb-5">Near Earth Comets</h1>
+        <h1 className="mb-2 text-orange-400 font-semibold font-mono">
+          Near Earth Comets
+        </h1>
+        <p className="mb-5 text-zinc-300 font-light">
+          Discover objects in space that have orbits near Earth. Use the filters
+          below to refine your search.
+        </p>
         <ProductFilters />
-        <div className="mb-4 flex gap-2">
-          <Button onClick={() => setView("table")} label="Table view" />
-          <Button onClick={() => setView("orbit")} label="Orbit view" />
+        <div className="flex justify-between items-end mb-4 mt-10">
+          <h2 className="text-xl font-medium text-orange-400 font-mono">
+            {view === "table"
+              ? "Comets data table"
+              : "Comets orbit visualization"}
+          </h2>
+          {insertToggleButton(view, toggleView)}
         </div>
         {view === "table" && (
           <div
-            className="grid border-1 border-slate-300 rounded-sm  overflow-x-auto"
+            className="grid border-2 border-zinc-900 rounded-lg text-zinc-400 overflow-x-auto"
             style={{
               gridTemplateColumns: `repeat(${state.properties.length}, minmax(100px, 1fr))`,
             }}
             role="table"
-            aria-label="Product data table"
+            aria-label="Near earth comets data table"
           >
             {/* column headings */}
             {state.properties.map(({ id, name }) => {
@@ -68,8 +111,8 @@ export default function Products() {
                   <ProductRow key={product.id} product={product} />
                 ))}
             {filteredProducts?.length === 0 && (
-              <div className="col-span-full p-4 text-center text-slate-500">
-                No products match the current filters.
+              <div className="col-span-full p-4 text-center text-zinc-400">
+                No comets match the current filters.
               </div>
             )}
           </div>
@@ -92,16 +135,7 @@ export default function Products() {
               </div>
             )
         }
-        {view === "orbit" && (
-          <div>
-            <OrbitVisualization comets={filteredProducts} />
-            {filteredProducts?.length === 0 && (
-              <div className="p-4 text-center text-slate-500">
-                No comets match the current filters.
-              </div>
-            )}
-          </div>
-        )}
+        {view === "orbit" && <OrbitVisualization comets={filteredProducts} />}
       </ProductContext>
     </div>
   );
