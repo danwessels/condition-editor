@@ -87,7 +87,7 @@ function buildOperatorParams(
 
   if (operator === OPERATOR_TYPES.IN) {
     const comparisonValue = selectedValues.map(({ value }) => {
-      return shouldParseToNumber ? parseInt(value) : value;
+      return shouldParseToNumber ? parseInt(value) : value.toLowerCase();
     });
 
     return {
@@ -101,10 +101,7 @@ function buildOperatorParams(
       shouldParseToNumber,
     );
 
-    if (
-      operator === OPERATOR_TYPES.CONTAINS ||
-      (typeof productValue === "string" && !shouldParseToNumber)
-    ) {
+    if (operator === OPERATOR_TYPES.CONTAINS) {
       return {
         operator: operator as "contains",
         productValue: parsedProductValue as string,
@@ -112,10 +109,7 @@ function buildOperatorParams(
       };
     }
 
-    if (
-      typeof productValue === "number" &&
-      typeof comparisonValue === "number"
-    ) {
+    if (typeof productValue === "number") {
       return {
         operator: operator as "equals" | "greater_than" | "less_than",
         productValue: parsedProductValue as number,
