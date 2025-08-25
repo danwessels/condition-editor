@@ -80,14 +80,14 @@ function buildOperatorParams(
     };
   }
 
-  const shouldParseToNumber = typeof productValue === "number";
-  const parsedProductValue = shouldParseToNumber
+  const isNumberComparison = typeof productValue === "number";
+  const parsedProductValue = isNumberComparison
     ? productValue
     : (productValue?.toLowerCase() ?? "");
 
   if (operator === OPERATOR_TYPES.IN) {
     const comparisonValue = selectedValues.map(({ value }) => {
-      return shouldParseToNumber ? parseInt(value) : value.toLowerCase();
+      return isNumberComparison ? parseInt(value) : value.toLowerCase();
     });
 
     return {
@@ -98,7 +98,7 @@ function buildOperatorParams(
   } else {
     const comparisonValue = parseComparisonValue(
       searchText,
-      shouldParseToNumber,
+      isNumberComparison,
     );
 
     if (
