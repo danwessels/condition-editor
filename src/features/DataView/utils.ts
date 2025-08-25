@@ -59,11 +59,11 @@ export const checkMatchesOperatorCondition = (
 
 const parseComparisonValue = (
   value: string | number,
-  parseToNumber: boolean,
+  shouldParseToNumber: boolean,
 ) => {
   if (typeof value === "number") return value;
   if (typeof value === "string") {
-    return parseToNumber ? parseInt(value) : value.toLowerCase();
+    return shouldParseToNumber ? parseInt(value) : value.toLowerCase();
   }
 };
 
@@ -80,14 +80,14 @@ function buildOperatorParams(
     };
   }
 
-  const parseToNumber = typeof productValue === "number";
-  const parsedProductValue = parseToNumber
+  const shouldParseToNumber = typeof productValue === "number";
+  const parsedProductValue = shouldParseToNumber
     ? productValue
     : (productValue?.toLowerCase() ?? "");
 
   if (operator === OPERATOR_TYPES.IN) {
     const comparisonValue = selectedValues.map(({ value }) => {
-      return parseToNumber ? parseInt(value) : value;
+      return shouldParseToNumber ? parseInt(value) : value;
     });
 
     return {
@@ -96,11 +96,14 @@ function buildOperatorParams(
       comparisonValue: comparisonValue as string[] | number[],
     };
   } else {
-    const comparisonValue = parseComparisonValue(searchText, parseToNumber);
+    const comparisonValue = parseComparisonValue(
+      searchText,
+      shouldParseToNumber,
+    );
 
     if (
       operator === OPERATOR_TYPES.CONTAINS ||
-      (typeof productValue === "string" && !parseToNumber)
+      (typeof productValue === "string" && !shouldParseToNumber)
     ) {
       return {
         operator: operator as "contains",
