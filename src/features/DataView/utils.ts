@@ -113,7 +113,7 @@ function buildOperatorParams(
       };
     }
 
-    if (typeof productValue === "number") {
+    if (isNumberComparison) {
       return {
         operator: operator as "equals" | "greater_than" | "less_than",
         productValue: parsedProductValue as number,
