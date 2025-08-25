@@ -101,9 +101,13 @@ function buildOperatorParams(
       shouldParseToNumber,
     );
 
-    if (operator === OPERATOR_TYPES.CONTAINS) {
+    if (
+      typeof productValue === "string" &&
+      (operator === OPERATOR_TYPES.CONTAINS ||
+        operator === OPERATOR_TYPES.EQUALS)
+    ) {
       return {
-        operator: operator as "contains",
+        operator: operator as "contains" | "equals",
         productValue: parsedProductValue as string,
         comparisonValue: comparisonValue as string,
       };
