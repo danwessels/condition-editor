@@ -28,7 +28,10 @@ export const checkMatchesOperatorCondition = (
   const { operator, productValue, comparisonValue } = props;
   switch (operator) {
     case OPERATOR_TYPES.EQUALS:
-      if (comparisonValue === "") return true;
+      if (typeof comparisonValue === "string" && comparisonValue === "")
+        return true;
+      if (typeof comparisonValue === "number" && isNaN(comparisonValue))
+        return true;
       return productValue === comparisonValue;
     case OPERATOR_TYPES.GREATER_THAN:
       if (isNaN(comparisonValue)) return true;
@@ -54,11 +57,21 @@ export const checkMatchesOperatorCondition = (
   }
 };
 
+const parseComparisonValue = (
+  value: string | number,
+  parseToNumber: boolean,
+) => {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    return parseToNumber ? parseInt(value) : value.toLowerCase();
+  }
+};
+
 function buildOperatorParams(
   operator: string,
   productValue: string | number | undefined,
   selectedValues: MultiValue<SelectOptionType>,
-  searchText: string,
+  searchText: string | number,
 ): OperatorConditionParams {
   if (operator === OPERATOR_TYPES.NONE) {
     return {
@@ -67,14 +80,14 @@ function buildOperatorParams(
     };
   }
 
-  const isNumber = typeof productValue === "number";
-  const parsedProductValue = isNumber
+  const parseToNumber = typeof productValue === "number";
+  const parsedProductValue = parseToNumber
     ? productValue
     : (productValue?.toLowerCase() ?? "");
 
   if (operator === OPERATOR_TYPES.IN) {
     const comparisonValue = selectedValues.map(({ value }) => {
-      return isNumber ? parseInt(value) : value.toLowerCase();
+      return parseToNumber ? parseInt(value) : value;
     });
 
     return {
@@ -83,22 +96,23 @@ function buildOperatorParams(
       comparisonValue: comparisonValue as string[] | number[],
     };
   } else {
-    const comparisonValue = isNumber
-      ? parseInt(searchText)
-      : searchText.toLowerCase();
+    const comparisonValue = parseComparisonValue(searchText, parseToNumber);
 
     if (
       operator === OPERATOR_TYPES.CONTAINS ||
-      operator === OPERATOR_TYPES.EQUALS
+      (typeof productValue === "string" && !parseToNumber)
     ) {
       return {
-        operator: operator as "contains" | "equals",
+        operator: operator as "contains",
         productValue: parsedProductValue as string,
         comparisonValue: comparisonValue as string,
       };
     }
 
-    if (typeof productValue === "number") {
+    if (
+      typeof productValue === "number" &&
+      typeof comparisonValue === "number"
+    ) {
       return {
         operator: operator as "equals" | "greater_than" | "less_than",
         productValue: parsedProductValue as number,
