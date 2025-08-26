@@ -78,10 +78,8 @@ export default function Products() {
   return (
     <div>
       <ProductContext value={[state, dispatch]}>
-        <h1 className="mb-2 text-orange-400 font-semibold font-mono">
-          Near Earth Comets
-        </h1>
-        <p className="mb-5 text-zinc-300 font-light max-w-prose">
+        <h1 className="mb-4">Near Earth Comets</h1>
+        <p className="mb-5 font-light max-w-prose">
           Discover comets that have orbits near Earth. The data presented here
           is from the{" "}
           <a
@@ -95,7 +93,7 @@ export default function Products() {
         </p>
         <ProductFilters />
         <div className="flex justify-between items-end mb-4 mt-10">
-          <h2 className="text-xl font-medium text-orange-400 font-mono">
+          <h2 className="text-xl">
             {view === "table"
               ? "Comets data table"
               : "Comets orbit visualization"}

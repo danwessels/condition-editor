@@ -28,7 +28,10 @@ export const checkMatchesOperatorCondition = (
   const { operator, productValue, comparisonValue } = props;
   switch (operator) {
     case OPERATOR_TYPES.EQUALS:
-      if (comparisonValue === "") return true;
+      if (typeof comparisonValue === "string" && comparisonValue === "")
+        return true;
+      if (typeof comparisonValue === "number" && isNaN(comparisonValue))
+        return true;
       return productValue === comparisonValue;
     case OPERATOR_TYPES.GREATER_THAN:
       if (isNaN(comparisonValue)) return true;
@@ -54,11 +57,21 @@ export const checkMatchesOperatorCondition = (
   }
 };
 
+const parseComparisonValue = (
+  value: string | number,
+  shouldParseToNumber: boolean,
+) => {
+  if (typeof value === "number") return value;
+  if (typeof value === "string") {
+    return shouldParseToNumber ? parseFloat(value) : value.toLowerCase();
+  }
+};
+
 function buildOperatorParams(
   operator: string,
   productValue: string | number | undefined,
   selectedValues: MultiValue<SelectOptionType>,
-  searchText: string,
+  searchText: string | number,
 ): OperatorConditionParams {
   if (operator === OPERATOR_TYPES.NONE) {
     return {
@@ -67,14 +80,14 @@ function buildOperatorParams(
     };
   }
 
-  const isNumber = typeof productValue === "number";
-  const parsedProductValue = isNumber
+  const isNumberComparison = typeof productValue === "number";
+  const parsedProductValue = isNumberComparison
     ? productValue
     : (productValue?.toLowerCase() ?? "");
 
   if (operator === OPERATOR_TYPES.IN) {
     const comparisonValue = selectedValues.map(({ value }) => {
-      return isNumber ? parseInt(value) : value.toLowerCase();
+      return isNumberComparison ? parseFloat(value) : value.toLowerCase();
     });
 
     return {
@@ -83,13 +96,15 @@ function buildOperatorParams(
       comparisonValue: comparisonValue as string[] | number[],
     };
   } else {
-    const comparisonValue = isNumber
-      ? parseInt(searchText)
-      : searchText.toLowerCase();
+    const comparisonValue = parseComparisonValue(
+      searchText,
+      isNumberComparison,
+    );
 
     if (
-      operator === OPERATOR_TYPES.CONTAINS ||
-      operator === OPERATOR_TYPES.EQUALS
+      typeof productValue === "string" &&
+      (operator === OPERATOR_TYPES.CONTAINS ||
+        operator === OPERATOR_TYPES.EQUALS)
     ) {
       return {
         operator: operator as "contains" | "equals",
@@ -98,7 +113,7 @@ function buildOperatorParams(
       };
     }
 
-    if (typeof productValue === "number") {
+    if (isNumberComparison) {
       return {
         operator: operator as "equals" | "greater_than" | "less_than",
         productValue: parsedProductValue as number,
@@ -118,7 +133,7 @@ export function getFilteredProducts(state: State) {
     state;
 
   if (selectedProperty?.value && selectedOperator?.value) {
-    const propertyId = parseInt(selectedProperty?.value);
+    const propertyId = parseFloat(selectedProperty?.value);
 
     return state.products.filter((product) => {
       // Find the property value for the selected property
@@ -205,7 +220,7 @@ export function getSelectedProperty(
   if (selectedProperty?.value) {
     return (
       allProperties.find(
-        (property) => property.id === parseInt(selectedProperty!.value),
+        (property) => property.id === parseFloat(selectedProperty!.value),
       ) ?? null
     );
   }
