@@ -76,7 +76,7 @@ export default function ProductFilters() {
   );
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between w-full items-start sm:gap-4 border-orange-400 border-b-1">
+    <div className="flex flex-col sm:flex-row justify-between w-full items-start sm:gap-4 border-amber-600 border-b-1">
       <div className="flex flex-wrap max-w-[50rem] w-full">
         <div className={fieldContainerClass}>
           <Select
