@@ -63,7 +63,7 @@ const parseComparisonValue = (
 ) => {
   if (typeof value === "number") return value;
   if (typeof value === "string") {
-    return shouldParseToNumber ? parseInt(value) : value.toLowerCase();
+    return shouldParseToNumber ? parseFloat(value) : value.toLowerCase();
   }
 };
 
@@ -87,7 +87,7 @@ function buildOperatorParams(
 
   if (operator === OPERATOR_TYPES.IN) {
     const comparisonValue = selectedValues.map(({ value }) => {
-      return isNumberComparison ? parseInt(value) : value.toLowerCase();
+      return isNumberComparison ? parseFloat(value) : value.toLowerCase();
     });
 
     return {
@@ -133,7 +133,7 @@ export function getFilteredProducts(state: State) {
     state;
 
   if (selectedProperty?.value && selectedOperator?.value) {
-    const propertyId = parseInt(selectedProperty?.value);
+    const propertyId = parseFloat(selectedProperty?.value);
 
     return state.products.filter((product) => {
       // Find the property value for the selected property
@@ -220,7 +220,7 @@ export function getSelectedProperty(
   if (selectedProperty?.value) {
     return (
       allProperties.find(
-        (property) => property.id === parseInt(selectedProperty!.value),
+        (property) => property.id === parseFloat(selectedProperty!.value),
       ) ?? null
     );
   }
