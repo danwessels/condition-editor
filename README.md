@@ -47,7 +47,7 @@ npm run dev
 
 ## How It Works
 
-The application uses a comet data from NASA to demonstrate the capabilities of a condition editor with properties and filtering capabilities. Users can:
+The application uses near-Earth comets data from NASA to demonstrate the capabilities of a condition editor with properties and filtering capabilities. Users can:
 
 1. **Select a Property**: Choose from available properties
 2. **Choose an Operator**: Pick an appropriate comparison operator based on property type
